@@ -4,6 +4,7 @@ import { QRCodeSVG } from 'qrcode.react'
 
 const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
     const [copied, setCopied] = useState(false)
+    const canShare = typeof navigator !== 'undefined' && !!navigator.share;
 
     const shareUrl = peerId
         ? `${window.location.origin}${window.location.pathname}?connect=${peerId}`
@@ -19,6 +20,20 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
             console.error('Failed to copy:', err)
         }
     }, [shareUrl])
+
+    const handleShare = useCallback(async (e) => {
+        e.stopPropagation();
+        if (!shareUrl) return;
+        try {
+            await navigator.share({
+                title: 'AirNode File Transfer',
+                text: 'Connect to AirNode to receive files:',
+                url: shareUrl
+            });
+        } catch (err) {
+            console.error('Failed to share:', err);
+        }
+    }, [shareUrl]);
 
     // Simple status text mapping
     const getStatusText = () => {
@@ -79,17 +94,39 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
                                 </p>
                             </div>
 
-                            {/* Link Container */}
-                            <div
-                                className="group flex items-center justify-between border-b border-white/20 pb-2 hover:border-white transition-colors duration-300 cursor-pointer w-full"
-                                onClick={handleCopy}
-                            >
-                                <span className="font-mono text-sm text-gray-300 truncate mr-4 selection:bg-white selection:text-black min-w-0 flex-1 text-left">
-                                    {shareUrl || 'Generating ID...'}
-                                </span>
-                                <span className="text-xs uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors duration-300 shrink-0">
-                                    {copied ? 'Copied' : 'Copy Link'}
-                                </span>
+                            {/* Link Container with Copy & Share */}
+                            <div className="flex flex-col gap-2 w-full">
+                                <div
+                                    className="group flex items-center justify-between border-b border-white/20 pb-2 hover:border-white transition-colors duration-300 cursor-pointer w-full"
+                                    onClick={handleCopy}
+                                >
+                                    <span className="font-mono text-sm text-gray-300 truncate mr-4 selection:bg-white selection:text-black min-w-0 flex-1 text-left">
+                                        {shareUrl || 'Generating ID...'}
+                                    </span>
+
+                                    <div className="flex items-center gap-4 shrink-0">
+                                        {/* Native Share Button (Mobile mostly) */}
+                                        {canShare && (
+                                            <button
+                                                onClick={handleShare}
+                                                className="text-gray-500 hover:text-white transition-colors duration-300"
+                                                title="Share Link"
+                                            >
+                                                <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                    <circle cx="18" cy="5" r="3"></circle>
+                                                    <circle cx="6" cy="12" r="3"></circle>
+                                                    <circle cx="18" cy="19" r="3"></circle>
+                                                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                                                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                                                </svg>
+                                            </button>
+                                        )}
+
+                                        <span className="text-xs uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors duration-300">
+                                            {copied ? 'Copied' : 'Copy'}
+                                        </span>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </>
