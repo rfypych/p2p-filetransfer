@@ -56,12 +56,13 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
             </div>
 
             {/* Content */}
-            <div className="flex flex-col md:flex-row gap-12 items-start animate-slide-up">
+            <div className="flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start animate-slide-up">
 
                 {/* Mode: SENDER Waiting */}
                 {mode === 'send' && connectionState === 'waiting' && (
                     <>
-                        <div className="bg-white p-2 w-fit shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-transform duration-500 hover:scale-[1.02]">
+                        {/* QR Code */}
+                        <div className="bg-white p-2 w-fit shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-transform duration-500 hover:scale-[1.02] flex-shrink-0">
                             {peerId ? (
                                 <QRCodeSVG value={shareUrl} size={140} />
                             ) : (
@@ -69,7 +70,8 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
                             )}
                         </div>
 
-                        <div className="flex-1 space-y-6">
+                        {/* Text & Link */}
+                        <div className="flex-1 space-y-6 w-full text-center md:text-left">
                             <div>
                                 <h3 className="font-serif text-3xl text-white mb-2 tracking-tight">Scan to Connect</h3>
                                 <p className="text-gray-500 font-light leading-relaxed">
@@ -77,14 +79,15 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
                                 </p>
                             </div>
 
+                            {/* Link Container */}
                             <div
-                                className="group flex items-center justify-between border-b border-white/20 pb-2 hover:border-white transition-colors duration-300 cursor-pointer"
+                                className="group flex items-center justify-between border-b border-white/20 pb-2 hover:border-white transition-colors duration-300 cursor-pointer w-full"
                                 onClick={handleCopy}
                             >
-                                <span className="font-mono text-sm text-gray-300 truncate mr-4 selection:bg-white selection:text-black">
+                                <span className="font-mono text-sm text-gray-300 truncate mr-4 selection:bg-white selection:text-black min-w-0 flex-1 text-left">
                                     {shareUrl || 'Generating ID...'}
                                 </span>
-                                <span className="text-xs uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors duration-300">
+                                <span className="text-xs uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors duration-300 shrink-0">
                                     {copied ? 'Copied' : 'Copy Link'}
                                 </span>
                             </div>
@@ -94,12 +97,12 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
 
                 {/* Other States (Connecting, Receiver, Error) */}
                 {(mode === 'receive' || (mode === 'send' && connectionState !== 'waiting')) && (
-                    <div className="w-full py-12">
+                    <div className="w-full py-12 text-center md:text-left">
                         <h2 className="font-serif text-4xl md:text-5xl text-white mb-4 tracking-tight">
                             {connectionState === 'connected' ? 'Ready.' :
                              connectionState === 'error' ? 'Failed.' : 'Connecting...'}
                         </h2>
-                        <p className="text-gray-500 text-lg font-light max-w-lg leading-relaxed">
+                        <p className="text-gray-500 text-lg font-light max-w-lg leading-relaxed mx-auto md:mx-0">
                             {connectionState === 'connected'
                                 ? (mode === 'send' ? 'Drag and drop files below to begin transfer.' : 'Waiting for sender to start.')
                                 : (connectionState === 'error' ? 'Please refresh and try again.' : 'Establishing a secure peer-to-peer data channel.')

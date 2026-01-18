@@ -8,13 +8,12 @@ export default function Logo({ className = "w-6 h-6" }) {
             xmlns="http://www.w3.org/2000/svg"
         >
             <path
-                d="M12 2L2 22H22L12 2Z"
+                d="M17.5 19C19.9853 19 22 16.9853 22 14.5C22 12.132 20.177 10.244 17.819 10.034C17.65 6.47 14.717 3.5 11 3.5C7.283 3.5 4.35 6.47 4.181 10.034C1.823 10.244 0 12.132 0 14.5C0 16.9853 2.01472 19 4.5 19H17.5Z"
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 className="text-white"
             />
-            <circle cx="12" cy="15" r="3" strokeWidth="1.5" className="text-white/50" />
         </svg>
     )
 }
