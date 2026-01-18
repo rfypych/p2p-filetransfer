@@ -1,5 +1,6 @@
 import { useState, useCallback, useEffect, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
+import Header from './components/Header'
 import Hero from './components/Hero'
 import FileDropZone from './components/FileDropZone'
 import ConnectionPanel from './components/ConnectionPanel'
@@ -72,83 +73,81 @@ function App() {
                                (mode === 'receive' && receivedFile);
 
     return (
-        // Minimalist container
-        <div className="min-h-screen bg-background text-gray-300 font-sans selection:bg-white selection:text-black flex flex-col">
+        // Minimalist container with slight background gradient nuance
+        <div className="min-h-screen bg-[#050505] text-gray-300 font-sans selection:bg-white selection:text-black flex flex-col">
 
             {/* Header / Nav */}
-            <header className="px-6 py-8 md:px-12 md:py-10 flex justify-between items-center border-b border-white/5">
-                <div
-                    className="font-serif text-2xl tracking-tight text-white cursor-pointer"
-                    onClick={() => setMode('home')}
-                >
-                    AirNode.
-                </div>
-                <div className="text-xs tracking-widest uppercase text-gray-500 hidden sm:block">
-                    P2P File Transfer
-                </div>
-            </header>
+            <Header onLogoClick={() => setMode('home')} />
 
             {/* Main Content Area */}
-            <main className="flex-1 w-full max-w-4xl mx-auto px-6 py-12 md:px-12 flex flex-col justify-center">
-                <AnimatePresence mode="wait">
-                    {mode === 'home' && (
-                        <Hero
-                            key="hero"
-                            onSendClick={handleSendMode}
-                            onReceiveClick={handleReceiveOptionsMode}
-                        />
-                    )}
+            <main className="flex-1 w-full max-w-5xl mx-auto px-6 py-12 md:px-12 flex flex-col justify-center relative">
 
-                    {mode === 'receive-options' && (
-                        <ReceiveOptions
-                            key="receive-options"
-                            onConnect={handleReceiveMode}
-                            onBack={() => setMode('home')}
-                        />
-                    )}
+                {/* Subtle vertical divider for large screens */}
+                <div className="hidden lg:block absolute left-12 top-0 bottom-0 w-[1px] bg-white/5 pointer-events-none" />
 
-                    {(mode === 'send' || mode === 'receive') && !isTransferComplete && (
-                        <div key="transfer" className="w-full space-y-12">
-                            <ConnectionPanel
-                                mode={mode}
-                                peerId={peerId}
-                                connectionState={connectionState}
-                                remotePeerId={remotePeerId}
-                                error={error}
+                <div className="lg:pl-16 w-full">
+                    <AnimatePresence mode="wait">
+                        {mode === 'home' && (
+                            <Hero
+                                key="hero"
+                                onSendClick={handleSendMode}
+                                onReceiveClick={handleReceiveOptionsMode}
                             />
+                        )}
 
-                            {mode === 'send' && connectionState === 'connected' && (
-                                <FileDropZone
-                                    onFileSelect={handleFileSelect}
-                                    selectedFile={selectedFile}
-                                    disabled={connectionState === 'transferring'}
+                        {mode === 'receive-options' && (
+                            <ReceiveOptions
+                                key="receive-options"
+                                onConnect={handleReceiveMode}
+                                onBack={() => setMode('home')}
+                            />
+                        )}
+
+                        {(mode === 'send' || mode === 'receive') && !isTransferComplete && (
+                            <div key="transfer" className="w-full space-y-12">
+                                <ConnectionPanel
+                                    mode={mode}
+                                    peerId={peerId}
+                                    connectionState={connectionState}
+                                    remotePeerId={remotePeerId}
+                                    error={error}
                                 />
-                            )}
 
-                            {(connectionState === 'transferring' || transferProgress > 0) && (
-                                <ProgressBar
-                                    progress={transferProgress}
-                                    speed={transferSpeed}
-                                    fileName={selectedFile?.name || receivedFile?.name || 'File'}
-                                    fileSize={selectedFile?.size || receivedFile?.size || 0}
-                                />
-                            )}
-                        </div>
-                    )}
+                                {mode === 'send' && connectionState === 'connected' && (
+                                    <div className="animate-fade-in border-t border-white/5 pt-12">
+                                        <FileDropZone
+                                            onFileSelect={handleFileSelect}
+                                            selectedFile={selectedFile}
+                                            disabled={connectionState === 'transferring'}
+                                        />
+                                    </div>
+                                )}
 
-                    {isTransferComplete && (
-                        <TransferComplete
-                            key="complete"
-                            mode={mode}
-                            file={mode === 'send' ? selectedFile : receivedFile}
-                            onReset={handleReset}
-                        />
-                    )}
-                </AnimatePresence>
+                                {(connectionState === 'transferring' || transferProgress > 0) && (
+                                    <ProgressBar
+                                        progress={transferProgress}
+                                        speed={transferSpeed}
+                                        fileName={selectedFile?.name || receivedFile?.name || 'File'}
+                                        fileSize={selectedFile?.size || receivedFile?.size || 0}
+                                    />
+                                )}
+                            </div>
+                        )}
+
+                        {isTransferComplete && (
+                            <TransferComplete
+                                key="complete"
+                                mode={mode}
+                                file={mode === 'send' ? selectedFile : receivedFile}
+                                onReset={handleReset}
+                            />
+                        )}
+                    </AnimatePresence>
+                </div>
             </main>
 
-            {/* Minimal Footer */}
-            <footer className="px-6 py-8 md:px-12 border-t border-white/5 text-xs text-gray-600 flex justify-between items-center">
+            {/* Minimal Footer with different background tone */}
+            <footer className="px-6 py-8 md:px-12 bg-[#080808] border-t border-white/5 text-xs text-gray-600 flex justify-between items-center transition-colors duration-500 hover:text-gray-500">
                 <span>&copy; {new Date().getFullYear()} AirNode</span>
                 <span>Serverless WebRTC</span>
             </footer>

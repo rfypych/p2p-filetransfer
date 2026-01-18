@@ -34,14 +34,15 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
 
     return (
         <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
             className="w-full"
         >
             {/* Status Line */}
             <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-8">
                 <div className="flex items-center gap-3">
-                    <div className={`w-1.5 h-1.5 rounded-full ${
+                    <div className={`w-1.5 h-1.5 rounded-full transition-colors duration-500 ${
                         connectionState === 'connected' ? 'bg-white' :
                         connectionState === 'error' ? 'bg-red-500' : 'bg-gray-500 animate-pulse'
                     }`} />
@@ -49,18 +50,18 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
                         {getStatusText()}
                     </span>
                 </div>
-                <a href="/" className="text-xs text-gray-500 hover:text-white transition-colors uppercase tracking-widest">
+                <a href="/" className="text-xs text-gray-500 hover:text-white transition-colors duration-300 uppercase tracking-widest">
                     Cancel
                 </a>
             </div>
 
             {/* Content */}
-            <div className="flex flex-col md:flex-row gap-12 items-start">
+            <div className="flex flex-col md:flex-row gap-12 items-start animate-slide-up">
 
                 {/* Mode: SENDER Waiting */}
                 {mode === 'send' && connectionState === 'waiting' && (
                     <>
-                        <div className="bg-white p-2 w-fit">
+                        <div className="bg-white p-2 w-fit shadow-[0_0_15px_rgba(255,255,255,0.05)] transition-transform duration-500 hover:scale-[1.02]">
                             {peerId ? (
                                 <QRCodeSVG value={shareUrl} size={140} />
                             ) : (
@@ -70,17 +71,20 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
 
                         <div className="flex-1 space-y-6">
                             <div>
-                                <h3 className="font-serif text-3xl text-white mb-2">Scan to Connect</h3>
-                                <p className="text-gray-500 font-light">
+                                <h3 className="font-serif text-3xl text-white mb-2 tracking-tight">Scan to Connect</h3>
+                                <p className="text-gray-500 font-light leading-relaxed">
                                     Ask the receiver to scan the QR code or share the link below.
                                 </p>
                             </div>
 
-                            <div className="group flex items-center justify-between border-b border-white/20 pb-2 hover:border-white transition-colors cursor-pointer" onClick={handleCopy}>
-                                <span className="font-mono text-sm text-gray-300 truncate mr-4">
+                            <div
+                                className="group flex items-center justify-between border-b border-white/20 pb-2 hover:border-white transition-colors duration-300 cursor-pointer"
+                                onClick={handleCopy}
+                            >
+                                <span className="font-mono text-sm text-gray-300 truncate mr-4 selection:bg-white selection:text-black">
                                     {shareUrl || 'Generating ID...'}
                                 </span>
-                                <span className="text-xs uppercase tracking-widest text-gray-500 group-hover:text-white">
+                                <span className="text-xs uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors duration-300">
                                     {copied ? 'Copied' : 'Copy Link'}
                                 </span>
                             </div>
@@ -91,11 +95,11 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
                 {/* Other States (Connecting, Receiver, Error) */}
                 {(mode === 'receive' || (mode === 'send' && connectionState !== 'waiting')) && (
                     <div className="w-full py-12">
-                        <h2 className="font-serif text-4xl md:text-5xl text-white mb-4">
+                        <h2 className="font-serif text-4xl md:text-5xl text-white mb-4 tracking-tight">
                             {connectionState === 'connected' ? 'Ready.' :
                              connectionState === 'error' ? 'Failed.' : 'Connecting...'}
                         </h2>
-                        <p className="text-gray-500 text-lg font-light max-w-lg">
+                        <p className="text-gray-500 text-lg font-light max-w-lg leading-relaxed">
                             {connectionState === 'connected'
                                 ? (mode === 'send' ? 'Drag and drop files below to begin transfer.' : 'Waiting for sender to start.')
                                 : (connectionState === 'error' ? 'Please refresh and try again.' : 'Establishing a secure peer-to-peer data channel.')
