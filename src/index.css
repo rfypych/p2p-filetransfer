@@ -1,15 +1,26 @@
+:root {
+  /* Light Mode */
+  --color-background: #ffffff;
+  --color-surface: #f4f4f5; /* Zinc-100 */
+  --color-primary: #18181b; /* Zinc-900 */
+  --color-secondary: #71717a; /* Zinc-500 */
+  --color-border: #e4e4e7; /* Zinc-200 */
+}
+
+.dark {
+  /* Dark Mode */
+  --color-background: #050505;
+  --color-surface: #0a0a0a;
+  --color-primary: #ffffff;
+  --color-secondary: #a1a1aa; /* Zinc-400 */
+  --color-border: #27272a; /* Zinc-800 */
+}
+
 /* stylelint-disable at-rule-no-unknown */
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 /* stylelint-enable at-rule-no-unknown */
-
-:root {
-  --color-background: #050505;
-  --color-surface: #0a0a0a;
-  --color-primary: #ffffff;
-  --color-secondary: #a1a1aa;
-}
 
 * {
   margin: 0;
@@ -26,7 +37,6 @@
 }
 
 html {
-  /* Prevent scroll when not needed */
   height: 100%;
   overflow: hidden;
 }
@@ -34,31 +44,27 @@ html {
 body {
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   background-color: var(--color-background);
-  color: #e5e7eb;
+  color: var(--color-primary);
   height: 100%;
   overflow: hidden;
-  /* Prevent rubber band scrolling on iOS */
   overscroll-behavior: none;
   -webkit-overflow-scrolling: touch;
-  /* Prevent text size adjustment on orientation change */
   -webkit-text-size-adjust: 100%;
-  /* Prevent tap highlight */
   -webkit-tap-highlight-color: transparent;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 #root {
   height: 100%;
   height: 100dvh;
-  overflow-y: auto;
-  overflow-x: hidden;
   /* Prevent overscroll */
   overscroll-behavior: contain;
 }
 
 /* Selection */
 ::selection {
-  background: rgba(255, 255, 255, 0.2);
-  color: #fff;
+  background: var(--color-primary);
+  color: var(--color-background);
 }
 
 /* Animations */
@@ -85,12 +91,11 @@ body {
 /* Mobile-specific fixes */
 @media (max-width: 640px) {
   body {
-    /* Prevent pull-to-refresh on mobile */
     overscroll-behavior-y: contain;
   }
 }
 
-/* Safe area insets for notched devices */
+/* Safe area insets */
 @supports (padding: max(0px)) {
   body {
     padding-left: max(0px, env(safe-area-inset-left));

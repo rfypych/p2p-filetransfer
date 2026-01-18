@@ -4,6 +4,7 @@ export default {
         "./index.html",
         "./src/**/*.{js,ts,jsx,tsx}",
     ],
+    darkMode: 'class',
     theme: {
         extend: {
             fontFamily: {
@@ -11,12 +12,11 @@ export default {
                 serif: ['"Playfair Display"', 'serif'],
             },
             colors: {
-                background: '#050505',
-                surface: '#0a0a0a',
-                'surface-light': '#121212',
-                primary: '#ffffff', // Minimalist white primary
-                secondary: '#a1a1aa', // Zinc-400
-                border: '#27272a',    // Zinc-800
+                background: 'var(--color-background)',
+                surface: 'var(--color-surface)',
+                primary: 'var(--color-primary)',
+                secondary: 'var(--color-secondary)',
+                border: 'var(--color-border)',
             },
             animation: {
                 'fade-in': 'fadeIn 0.5s ease-out forwards',

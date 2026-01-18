@@ -74,18 +74,18 @@ function App() {
 
     return (
         // Wrapper for scrolling logic: h-screen overflow-y-auto to allow scrolling within the fixed body
-        <div className="h-screen w-full overflow-y-auto overflow-x-hidden bg-[#050505] text-gray-300 font-sans selection:bg-white selection:text-black flex flex-col">
+        <div className="h-screen w-full overflow-y-auto overflow-x-hidden bg-background text-secondary font-sans selection:bg-primary selection:text-background flex flex-col transition-colors duration-300">
 
             {/* Header / Nav */}
             <Header onLogoClick={() => setMode('home')} />
 
             {/* Main Content Area */}
-            <main className="flex-1 w-full max-w-5xl mx-auto px-6 py-12 md:px-12 flex flex-col justify-center relative min-h-[calc(100vh-140px)]">
+            <main className="flex-1 w-full max-w-5xl mx-auto px-6 py-12 md:px-12 flex flex-col justify-center relative min-h-screen">
 
                 {/* Subtle vertical divider for large screens */}
-                <div className="hidden lg:block absolute left-12 top-0 bottom-0 w-[1px] bg-white/5 pointer-events-none" />
+                <div className="hidden lg:block absolute left-12 top-0 bottom-0 w-[1px] bg-border pointer-events-none transition-colors duration-300" />
 
-                <div className="lg:pl-16 w-full">
+                <div className="lg:pl-16 w-full pb-12">
                     <AnimatePresence mode="wait">
                         {mode === 'home' && (
                             <Hero
@@ -114,7 +114,7 @@ function App() {
                                 />
 
                                 {mode === 'send' && connectionState === 'connected' && (
-                                    <div className="animate-fade-in border-t border-white/5 pt-12">
+                                    <div className="animate-fade-in border-t border-border pt-12 transition-colors duration-300">
                                         <FileDropZone
                                             onFileSelect={handleFileSelect}
                                             selectedFile={selectedFile}
@@ -147,7 +147,7 @@ function App() {
             </main>
 
             {/* Minimal Footer with different background tone */}
-            <footer className="px-6 py-8 md:px-12 bg-[#080808] border-t border-white/5 text-xs text-gray-600 flex justify-between items-center transition-colors duration-500 hover:text-gray-500">
+            <footer className="px-6 py-8 md:px-12 bg-surface border-t border-border text-xs text-secondary flex justify-between items-center transition-colors duration-300 hover:text-primary">
                 <span>&copy; {new Date().getFullYear()} AirNode</span>
                 <span>Serverless WebRTC</span>
             </footer>

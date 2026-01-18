@@ -12,7 +12,7 @@ export default function Logo({ className = "w-6 h-6" }) {
                 strokeWidth="1.5"
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                className="text-white"
+                className="text-primary transition-colors duration-300"
             />
         </svg>
     )
