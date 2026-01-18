@@ -80,7 +80,13 @@ function App() {
             <Header onLogoClick={() => setMode('home')} />
 
             {/* Main Content Area */}
-            <main className="flex-1 w-full max-w-5xl mx-auto px-6 py-12 md:px-12 flex flex-col justify-center relative min-h-screen">
+            {/*
+                Fixed layout overlap:
+                - Removed 'justify-center' from mobile view (default) and replaced with 'justify-start pt-32'.
+                - This adds a significant 128px (approx) top padding on mobile to push content well below the header.
+                - Kept 'md:justify-center md:pt-0' for desktop where vertical space is sufficient.
+            */}
+            <main className="flex-1 w-full max-w-5xl mx-auto px-6 pb-12 flex flex-col justify-start pt-32 md:justify-center md:pt-0 relative min-h-0 md:min-h-screen">
 
                 {/* Subtle vertical divider for large screens */}
                 <div className="hidden lg:block absolute left-12 top-0 bottom-0 w-[1px] bg-border pointer-events-none transition-colors duration-300" />
@@ -147,7 +153,7 @@ function App() {
             </main>
 
             {/* Minimal Footer with different background tone */}
-            <footer className="px-6 py-8 md:px-12 bg-surface border-t border-border text-xs text-secondary flex justify-between items-center transition-colors duration-300 hover:text-primary">
+            <footer className="px-6 py-8 md:px-12 bg-surface border-t border-border text-xs text-secondary flex justify-between items-center transition-colors duration-300 hover:text-primary mt-auto">
                 <span>&copy; {new Date().getFullYear()} AirNode</span>
                 <span>Serverless WebRTC</span>
             </footer>

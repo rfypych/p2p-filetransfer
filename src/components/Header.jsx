@@ -5,7 +5,7 @@ export default function Header({ onLogoClick }) {
     const { theme, toggleTheme } = useTheme()
 
     return (
-        <header className="px-6 py-6 md:px-12 md:py-8 flex justify-between items-center border-b border-border transition-all duration-500 ease-in-out">
+        <header className="px-6 py-6 md:px-12 md:py-8 flex justify-between items-center border-b border-border bg-background relative z-50 transition-all duration-500 ease-in-out">
             <div
                 className="flex items-center gap-3 cursor-pointer group"
                 onClick={onLogoClick}
