@@ -54,8 +54,8 @@ const FileDropZone = ({ onFileSelect, selectedFile, disabled }) => {
 
                 {/* Minimal Layout */}
                 <div className={`
-                    border border-white/10 p-8 md:p-12 transition-all duration-300
-                    ${isDragging ? 'bg-white/5 border-white/30' : 'hover:border-white/20'}
+                    border border-border p-8 md:p-12 transition-all duration-300
+                    ${isDragging ? 'bg-surface border-secondary' : 'hover:border-secondary'}
                 `}>
                     <AnimatePresence mode="wait">
                         {!selectedFile ? (
@@ -66,13 +66,13 @@ const FileDropZone = ({ onFileSelect, selectedFile, disabled }) => {
                                 exit={{ opacity: 0 }}
                                 className="flex flex-col items-start"
                             >
-                                <span className="font-mono text-xs text-gray-500 mb-2 uppercase tracking-widest">
+                                <span className="font-mono text-xs text-secondary mb-2 uppercase tracking-widest">
                                     File Input
                                 </span>
-                                <h3 className="font-serif text-3xl text-white mb-2 group-hover:underline decoration-1 underline-offset-4">
+                                <h3 className="font-serif text-3xl text-primary mb-2 group-hover:underline decoration-1 underline-offset-4">
                                     Drop file here
                                 </h3>
-                                <p className="text-sm text-gray-500">
+                                <p className="text-sm text-secondary">
                                     or click to browse local storage
                                 </p>
                             </motion.div>
@@ -86,10 +86,10 @@ const FileDropZone = ({ onFileSelect, selectedFile, disabled }) => {
                             >
                                 <div className="flex justify-between items-start w-full mb-2">
                                     <div>
-                                        <span className="font-mono text-xs text-gray-500 mb-1 block uppercase tracking-widest">
+                                        <span className="font-mono text-xs text-secondary mb-1 block uppercase tracking-widest">
                                             Ready to send
                                         </span>
-                                        <h3 className="font-serif text-2xl text-white break-all">
+                                        <h3 className="font-serif text-2xl text-primary break-all">
                                             {selectedFile.name}
                                         </h3>
                                     </div>
@@ -98,13 +98,13 @@ const FileDropZone = ({ onFileSelect, selectedFile, disabled }) => {
                                             e.stopPropagation()
                                             onFileSelect(null)
                                         }}
-                                        className="text-xs text-gray-500 hover:text-white uppercase tracking-widest relative z-30"
+                                        className="text-xs text-secondary hover:text-primary uppercase tracking-widest relative z-30"
                                     >
                                         Remove
                                     </button>
                                 </div>
-                                <div className="w-full h-px bg-white/20 my-4" />
-                                <div className="flex justify-between w-full font-mono text-xs text-gray-400">
+                                <div className="w-full h-px bg-border my-4" />
+                                <div className="flex justify-between w-full font-mono text-xs text-secondary">
                                     <span>{selectedFile.type || 'Unknown Type'}</span>
                                     <span>{formatFileSize(selectedFile.size)}</span>
                                 </div>

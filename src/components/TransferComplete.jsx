@@ -21,7 +21,7 @@ const TransferComplete = ({ mode, file, onReset }) => {
                     {[...Array(3)].map((_, i) => (
                         <motion.div
                             key={i}
-                            className="absolute inset-0 rounded-full border-2 border-success"
+                            className="absolute inset-0 rounded-full border-2 border-green-500"
                             initial={{ scale: 1, opacity: 0.5 }}
                             animate={{ scale: 2 + i * 0.5, opacity: 0 }}
                             transition={{
@@ -35,18 +35,18 @@ const TransferComplete = ({ mode, file, onReset }) => {
 
                     {/* Main circle */}
                     <motion.div
-                        className="w-32 h-32 mx-auto rounded-full bg-success/20 flex items-center justify-center relative"
+                        className="w-32 h-32 mx-auto rounded-full bg-green-500/10 flex items-center justify-center relative"
                         animate={{
                             boxShadow: [
-                                '0 0 0 0 rgba(16, 185, 129, 0.4)',
-                                '0 0 40px 20px rgba(16, 185, 129, 0.1)',
-                                '0 0 0 0 rgba(16, 185, 129, 0.4)'
+                                '0 0 0 0 rgba(34, 197, 94, 0.4)',
+                                '0 0 40px 20px rgba(34, 197, 94, 0.1)',
+                                '0 0 0 0 rgba(34, 197, 94, 0.4)'
                             ]
                         }}
                         transition={{ duration: 2, repeat: Infinity }}
                     >
                         <motion.svg
-                            className="w-16 h-16 text-success"
+                            className="w-16 h-16 text-green-500"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -72,7 +72,7 @@ const TransferComplete = ({ mode, file, onReset }) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
-                    className="text-3xl font-bold mb-2"
+                    className="text-3xl font-bold mb-2 text-primary"
                 >
                     {mode === 'send' ? 'File Sent!' : 'File Received!'}
                 </motion.h2>
@@ -81,7 +81,7 @@ const TransferComplete = ({ mode, file, onReset }) => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.5 }}
-                    className="text-slate-400 mb-8"
+                    className="text-secondary mb-8"
                 >
                     {mode === 'send'
                         ? 'Your file has been successfully transferred'
@@ -95,18 +95,18 @@ const TransferComplete = ({ mode, file, onReset }) => {
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ delay: 0.6 }}
-                        className="glass rounded-2xl p-6 mb-8"
+                        className="bg-surface border border-border rounded-2xl p-6 mb-8"
                     >
                         <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center text-2xl">
+                            <div className="w-14 h-14 rounded-xl bg-primary/5 flex items-center justify-center text-2xl">
                                 📁
                             </div>
                             <div className="text-left flex-1 min-w-0">
-                                <h4 className="font-semibold truncate">{file.name}</h4>
-                                <p className="text-sm text-slate-400">{formatFileSize(file.size)}</p>
+                                <h4 className="font-semibold truncate text-primary">{file.name}</h4>
+                                <p className="text-sm text-secondary">{formatFileSize(file.size)}</p>
                             </div>
-                            <div className="w-10 h-10 rounded-full bg-success/20 flex items-center justify-center">
-                                <svg className="w-5 h-5 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="w-10 h-10 rounded-full bg-green-500/10 flex items-center justify-center">
+                                <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                                 </svg>
                             </div>
@@ -125,7 +125,7 @@ const TransferComplete = ({ mode, file, onReset }) => {
                         onClick={onReset}
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="px-8 py-4 rounded-xl bg-gradient-to-r from-primary to-primary-light text-white font-semibold"
+                        className="px-8 py-4 rounded-xl bg-primary text-background font-semibold hover:bg-primary/90 transition-colors"
                     >
                         {mode === 'send' ? 'Send Another File' : 'Receive Another File'}
                     </motion.button>
@@ -134,7 +134,7 @@ const TransferComplete = ({ mode, file, onReset }) => {
                         href="/"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
-                        className="px-8 py-4 rounded-xl glass text-white font-semibold"
+                        className="px-8 py-4 rounded-xl border border-border text-primary font-semibold hover:bg-surface transition-colors"
                     >
                         Back to Home
                     </motion.a>
@@ -145,7 +145,7 @@ const TransferComplete = ({ mode, file, onReset }) => {
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ delay: 1 }}
-                    className="mt-12 text-sm text-slate-500"
+                    className="mt-12 text-sm text-secondary"
                 >
                     🔒 Transfer completed with end-to-end encryption
                 </motion.p>
