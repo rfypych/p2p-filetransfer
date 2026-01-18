@@ -4,6 +4,7 @@ import { QRCodeSVG } from 'qrcode.react'
 
 const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
     const [copied, setCopied] = useState(false)
+    const [copiedCode, setCopiedCode] = useState(false)
     const canShare = typeof navigator !== 'undefined' && !!navigator.share;
 
     const shareUrl = peerId
@@ -20,6 +21,17 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
             console.error('Failed to copy:', err)
         }
     }, [shareUrl])
+
+    const handleCopyCode = useCallback(async () => {
+        if (!peerId) return
+        try {
+            await navigator.clipboard.writeText(peerId)
+            setCopiedCode(true)
+            setTimeout(() => setCopiedCode(false), 2000)
+        } catch (err) {
+            console.error('Failed to copy code:', err)
+        }
+    }, [peerId])
 
     const handleShare = useCallback(async (e) => {
         e.stopPropagation();
@@ -126,6 +138,22 @@ const ConnectionPanel = ({ mode, peerId, connectionState, error }) => {
                                             {copied ? 'Copied' : 'Copy'}
                                         </span>
                                     </div>
+                                </div>
+                            </div>
+
+                            {/* Manual Code Entry Display */}
+                            <div className="pt-2 w-full">
+                                <p className="text-xs text-gray-500 uppercase tracking-widest mb-2 text-center md:text-left">Or use connection code</p>
+                                <div
+                                    className="group flex items-center justify-between md:justify-start gap-4 cursor-pointer p-3 bg-white/5 rounded border border-transparent hover:border-white/10 transition-colors"
+                                    onClick={handleCopyCode}
+                                >
+                                    <span className="font-serif text-2xl text-white tracking-wide">
+                                        {peerId || '...'}
+                                    </span>
+                                    <span className="text-[10px] uppercase tracking-widest text-gray-500 group-hover:text-white transition-colors">
+                                        {copiedCode ? 'Copied' : 'Click to Copy'}
+                                    </span>
                                 </div>
                             </div>
                         </div>
