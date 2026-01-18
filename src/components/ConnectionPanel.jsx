@@ -23,41 +23,17 @@ const ConnectionPanel = ({ mode, peerId, connectionState, remotePeerId, error })
     const getStatusConfig = () => {
         switch (connectionState) {
             case 'waiting':
-                return {
-                    color: 'bg-yellow-500',
-                    text: 'Waiting for connection...',
-                    pulse: true
-                }
+                return { color: 'bg-warning', text: 'Waiting for connection...', pulse: true }
             case 'connecting':
-                return {
-                    color: 'bg-blue-500',
-                    text: 'Connecting...',
-                    pulse: true
-                }
+                return { color: 'bg-blue-500', text: 'Connecting...', pulse: true }
             case 'connected':
-                return {
-                    color: 'bg-success',
-                    text: `Connected${remotePeerId ? ` to ${remotePeerId.slice(0, 6)}...` : ''}`,
-                    pulse: false
-                }
+                return { color: 'bg-success', text: `Connected${remotePeerId ? ` to ${remotePeerId.slice(0, 6)}...` : ''}`, pulse: false }
             case 'transferring':
-                return {
-                    color: 'bg-primary',
-                    text: 'Transferring...',
-                    pulse: true
-                }
+                return { color: 'bg-primary', text: 'Transferring...', pulse: true }
             case 'error':
-                return {
-                    color: 'bg-error',
-                    text: error || 'Connection failed',
-                    pulse: false
-                }
+                return { color: 'bg-error', text: error || 'Connection failed', pulse: false }
             default:
-                return {
-                    color: 'bg-slate-500',
-                    text: 'Initializing...',
-                    pulse: true
-                }
+                return { color: 'bg-slate-500', text: 'Initializing...', pulse: true }
         }
     }
 
@@ -69,59 +45,63 @@ const ConnectionPanel = ({ mode, peerId, connectionState, remotePeerId, error })
             animate={{ opacity: 1, y: 0 }}
             className="w-full"
         >
-            {/* Header */}
-            <div className="flex items-center justify-between mb-4 md:mb-6">
-                <div className="flex items-center gap-2 md:gap-3 min-w-0 flex-1">
-                    <div className={`w-2.5 h-2.5 md:w-3 md:h-3 rounded-full flex-shrink-0 ${status.color} ${status.pulse ? 'animate-pulse' : ''}`} />
-                    <span className="text-slate-300 text-sm md:text-base truncate">{status.text}</span>
+            {/* Status Bar */}
+            <div className="flex items-center justify-between mb-6 px-1">
+                <div className="flex items-center gap-3 bg-surface-light/50 px-4 py-2 rounded-full border border-white/5">
+                    <div className={`w-2.5 h-2.5 rounded-full ${status.color} ${status.pulse ? 'animate-pulse' : ''} shadow-[0_0_8px_currentColor]`} />
+                    <span className="text-slate-300 text-sm font-medium tracking-wide">{status.text}</span>
                 </div>
                 <motion.a
                     href="/"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="text-slate-400 hover:text-white transition-colors text-sm flex-shrink-0 ml-2"
+                    whileHover={{ x: -4 }}
+                    className="text-slate-400 hover:text-white transition-colors text-sm font-medium flex items-center gap-1"
                 >
-                    ← Back
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                    </svg>
+                    Back
                 </motion.a>
             </div>
 
-            {/* Connection card */}
-            <div className="glass rounded-2xl p-4 md:p-6 glow overflow-hidden">
+            {/* Main Card */}
+            <div className="glass rounded-3xl p-6 md:p-8 glow border border-white/10 shadow-2xl relative overflow-hidden">
+                {/* Background decoration */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-[80px] -z-10" />
+
+                {/* Sender Waiting Mode */}
                 {mode === 'send' && connectionState === 'waiting' && (
-                    <div className="flex flex-col items-center gap-6">
-                        {/* QR Code */}
+                    <div className="flex flex-col items-center gap-8">
                         <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
+                            initial={{ scale: 0.8, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
                             transition={{ type: "spring", bounce: 0.4 }}
-                            className="bg-white p-3 md:p-4 rounded-xl md:rounded-2xl"
+                            className="bg-white p-4 rounded-2xl shadow-xl"
                         >
                             {peerId ? (
                                 <QRCodeSVG
                                     value={shareUrl}
-                                    size={160}
+                                    size={180}
                                     level="H"
                                     includeMargin={false}
-                                    bgColor="#ffffff"
-                                    fgColor="#0a0a0f"
+                                    className="rounded-lg"
                                 />
                             ) : (
-                                <div className="w-[160px] h-[160px] bg-slate-200 animate-pulse rounded" />
+                                <div className="w-[180px] h-[180px] bg-slate-100 animate-pulse rounded-lg flex items-center justify-center">
+                                    <div className="w-8 h-8 border-4 border-slate-300 border-t-slate-400 rounded-full animate-spin" />
+                                </div>
                             )}
                         </motion.div>
 
-                        {/* Share info */}
-                        <div className="w-full text-center">
-                            <h3 className="text-xl md:text-2xl font-bold mb-2">Share this link</h3>
-                            <p className="text-slate-400 text-sm md:text-base mb-4">
-                                Scan QR code or share link with receiver
+                        <div className="w-full text-center max-w-md">
+                            <h3 className="text-2xl font-bold mb-2 text-white">Scan to Connect</h3>
+                            <p className="text-slate-400 mb-6">
+                                Share the link below or ask receiver to scan this code.
                             </p>
 
-                            {/* Link input - Fixed overflow */}
-                            <div className="flex gap-2 w-full">
-                                <div className="flex-1 min-w-0 px-3 md:px-4 py-2.5 md:py-3 rounded-xl bg-surface border border-slate-700 overflow-hidden">
-                                    <p className="text-xs md:text-sm text-slate-400 truncate">
-                                        {shareUrl || 'Generating link...'}
+                            <div className="flex gap-3 w-full">
+                                <div className="flex-1 min-w-0 bg-surface-light border border-white/10 rounded-xl px-4 py-3 flex items-center">
+                                    <p className="text-sm text-slate-300 truncate font-mono">
+                                        {shareUrl || 'Generating secure link...'}
                                     </p>
                                 </div>
                                 <motion.button
@@ -129,82 +109,78 @@ const ConnectionPanel = ({ mode, peerId, connectionState, remotePeerId, error })
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     disabled={!peerId}
-                                    className={`px-4 md:px-6 py-2.5 md:py-3 rounded-xl font-semibold transition-all flex-shrink-0 text-sm md:text-base ${copied
-                                        ? 'bg-success text-white'
-                                        : 'bg-primary hover:bg-primary-light text-white'
+                                    className={`px-6 py-3 rounded-xl font-bold transition-all text-sm flex items-center gap-2 ${copied
+                                        ? 'bg-success text-white shadow-[0_0_20px_rgba(16,185,129,0.3)]'
+                                        : 'bg-primary hover:bg-primary-light text-white shadow-[0_0_20px_rgba(99,102,241,0.3)]'
                                         }`}
                                 >
-                                    {copied ? '✓' : 'Copy'}
+                                    {copied ? (
+                                        <>
+                                            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
+                                            </svg>
+                                            Copied
+                                        </>
+                                    ) : (
+                                        'Copy'
+                                    )}
                                 </motion.button>
                             </div>
-
-                            {/* Connection ID */}
-                            {peerId && (
-                                <p className="mt-3 md:mt-4 text-xs text-slate-500">
-                                    Your ID: <code className="text-primary">{peerId}</code>
-                                </p>
-                            )}
                         </div>
                     </div>
                 )}
 
-                {mode === 'receive' && (
-                    <div className="text-center py-6 md:py-8">
-                        {/* Fixed animation - always animate when waiting or connecting */}
-                        {(connectionState === 'connecting' || connectionState === 'waiting' || connectionState === 'idle') && (
-                            <motion.div
-                                className="w-14 h-14 md:w-16 md:h-16 mx-auto mb-4 rounded-full border-4 border-primary border-t-transparent"
-                                animate={{ rotate: 360 }}
-                                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                            />
-                        )}
+                {/* Receiver Mode or Connecting States */}
+                {(mode === 'receive' || (mode === 'send' && connectionState !== 'waiting')) && (
+                    <div className="text-center py-8">
+                        {/* Spinner or Success Icon */}
+                        <div className="relative mb-6 mx-auto w-20 h-20 flex items-center justify-center">
+                            {(connectionState === 'connecting' || connectionState === 'waiting' || connectionState === 'idle') && (
+                                <>
+                                    <motion.div
+                                        className="absolute inset-0 rounded-full border-4 border-primary/30"
+                                        animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.8, 0.5] }}
+                                        transition={{ duration: 2, repeat: Infinity }}
+                                    />
+                                    <motion.div
+                                        className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent"
+                                        animate={{ rotate: 360 }}
+                                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                    />
+                                </>
+                            )}
 
-                        {connectionState === 'connected' && (
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                className="w-14 h-14 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-success/20 flex items-center justify-center"
-                            >
-                                <svg className="w-7 h-7 md:w-8 md:h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                                </svg>
-                            </motion.div>
-                        )}
+                            {connectionState === 'connected' && (
+                                <motion.div
+                                    initial={{ scale: 0 }}
+                                    animate={{ scale: 1 }}
+                                    className="w-full h-full rounded-full bg-success/20 flex items-center justify-center border border-success/40"
+                                >
+                                    <svg className="w-10 h-10 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                </motion.div>
+                            )}
 
-                        {connectionState === 'error' && (
-                            <div className="w-14 h-14 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-error/20 flex items-center justify-center">
-                                <svg className="w-7 h-7 md:w-8 md:h-8 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                                </svg>
-                            </div>
-                        )}
+                            {connectionState === 'error' && (
+                                <div className="w-full h-full rounded-full bg-error/20 flex items-center justify-center border border-error/40">
+                                    <svg className="w-10 h-10 text-error" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </div>
+                            )}
+                        </div>
 
-                        <h3 className="text-lg md:text-xl font-semibold mb-2">
-                            {connectionState === 'connecting' || connectionState === 'idle' || connectionState === 'waiting' ? 'Connecting...' :
-                                connectionState === 'connected' ? 'Connected!' :
+                        <h3 className="text-2xl font-bold mb-2 text-white">
+                            {connectionState === 'connecting' || connectionState === 'idle' || connectionState === 'waiting' ? 'Establishing Link...' :
+                                connectionState === 'connected' ? 'Secure Link Active!' :
                                     connectionState === 'error' ? 'Connection Failed' : 'Please wait...'}
                         </h3>
-                        <p className="text-slate-400 text-sm md:text-base">
-                            {connectionState === 'connecting' || connectionState === 'idle' || connectionState === 'waiting' ? 'Establishing secure connection...' :
-                                connectionState === 'connected' ? 'Waiting for file from sender...' :
-                                    connectionState === 'error' ? error : 'Please wait...'}
+                        <p className="text-slate-400">
+                            {connectionState === 'connecting' || connectionState === 'idle' || connectionState === 'waiting' ? 'Connecting to peer securely...' :
+                                connectionState === 'connected' ? (mode === 'send' ? 'Ready to send files.' : 'Waiting for sender to start...') :
+                                    connectionState === 'error' ? error : 'Synchronizing...'}
                         </p>
-                    </div>
-                )}
-
-                {connectionState === 'connected' && mode === 'send' && (
-                    <div className="text-center py-4">
-                        <motion.div
-                            initial={{ scale: 0 }}
-                            animate={{ scale: 1 }}
-                            className="w-14 h-14 md:w-16 md:h-16 mx-auto mb-4 rounded-full bg-success/20 flex items-center justify-center"
-                        >
-                            <svg className="w-7 h-7 md:w-8 md:h-8 text-success" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                            </svg>
-                        </motion.div>
-                        <h3 className="text-lg md:text-xl font-semibold text-success mb-2">Connected!</h3>
-                        <p className="text-slate-400 text-sm md:text-base">You can now select a file to send</p>
                     </div>
                 )}
             </div>

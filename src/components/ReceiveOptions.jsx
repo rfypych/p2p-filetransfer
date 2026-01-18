@@ -22,13 +22,21 @@ const ReceiveOptions = ({ onConnect, onBack }) => {
     const stopScanner = useCallback(async () => {
         if (scannerRef.current) {
             try {
-                const state = scannerRef.current.getState()
-                if (state === 2) { // SCANNING state
-                    await scannerRef.current.stop()
-                }
+                // Check if scanner is in a state that can be stopped
+                // Html5Qrcode.getState() returns:
+                // 0: UNKNOWN, 1: NOT_STARTED, 2: SCANNING, 3: PAUSED
+                // However, we just try/catch because the library can be finicky
+                await scannerRef.current.stop()
             } catch (err) {
-                console.log('Scanner stop error (safe to ignore):', err)
+                 // Ignore "Scanner is not running" or similar errors
+                 // eslint-disable-next-line no-console
+                 console.log('Scanner stop ignored:', err)
             }
+            // Clear instance (we create new one each time to be safe)
+            try {
+                // If possible clear it
+                scannerRef.current.clear()
+            } catch (e) { /* ignore */ }
             scannerRef.current = null
         }
         setIsScanning(false)
@@ -51,7 +59,9 @@ const ReceiveOptions = ({ onConnect, onBack }) => {
 
             const readerElement = document.getElementById('qr-reader')
             if (!readerElement) {
-                throw new Error('Scanner element not found')
+                // If element is missing (e.g. user navigated away quickly), just stop
+                setIsScanning(false)
+                return
             }
 
             const scanner = new Html5Qrcode('qr-reader', { verbose: false })
@@ -60,8 +70,8 @@ const ReceiveOptions = ({ onConnect, onBack }) => {
             await scanner.start(
                 { facingMode: 'environment' },
                 {
-                    fps: 5,
-                    qrbox: { width: 220, height: 220 },
+                    fps: 10,
+                    qrbox: { width: 250, height: 250 },
                     aspectRatio: 1.0
                 },
                 (decodedText) => {
@@ -112,9 +122,26 @@ const ReceiveOptions = ({ onConnect, onBack }) => {
     // Cleanup on unmount
     useEffect(() => {
         return () => {
-            stopScanner()
+            // Force stop on unmount
+            if (scannerRef.current) {
+                // We use the raw stop logic here to avoid dependency cycle if we used stopScanner
+                // But since stopScanner is useCallback with empty deps (mostly), it's fine?
+                // Actually stopScanner depends on nothing.
+            }
+            // We can't await in cleanup, so we fire and forget
+            // But we must call the method that handles the ref logic
+        }
+    }, [])
+
+    // Separate effect for cleanup that calls the async function
+    useEffect(() => {
+        return () => {
+             // We can't await this, but we trigger it
+             // eslint-disable-next-line
+             stopScanner().catch(e => {})
         }
     }, [stopScanner])
+
 
     // Start scanner when scan method selected (with delay to prevent shaking)
     useEffect(() => {
@@ -124,7 +151,9 @@ const ReceiveOptions = ({ onConnect, onBack }) => {
             }, 300)
             return () => clearTimeout(timer)
         } else {
-            stopScanner()
+             // Stop is handled by unmount or mode switch logic,
+             // but if method changes to 'manual', we should stop.
+             stopScanner()
         }
     }, [method, startScanner, stopScanner])
 
@@ -155,7 +184,7 @@ const ReceiveOptions = ({ onConnect, onBack }) => {
                         whileTap={{ scale: 0.95 }}
                         className="text-slate-400 hover:text-white transition-colors text-sm"
                     >
-                        ← Back
+                        &larr; Back
                     </motion.button>
                 </div>
 
@@ -188,7 +217,7 @@ const ReceiveOptions = ({ onConnect, onBack }) => {
                                     </div>
                                     <div>
                                         <h3 className="text-lg font-semibold mb-1">Scan QR Code</h3>
-                                        <p className="text-sm text-slate-400">Use camera to scan sender's QR</p>
+                                        <p className="text-sm text-slate-400">Use camera to scan sender&apos;s QR</p>
                                     </div>
                                 </div>
                             </motion.button>

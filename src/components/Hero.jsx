@@ -1,276 +1,139 @@
 import { motion } from 'framer-motion'
 
-// Cloud Logo Component
+// Modernized Cloud Logo with subtle glass morphism and smoother animation
 const CloudLogo = () => (
     <motion.svg
-        className="w-28 h-28 md:w-36 md:h-36"
+        className="w-32 h-32 md:w-48 md:h-48 drop-shadow-2xl"
         viewBox="0 0 120 100"
         fill="none"
-        initial={{ scale: 0, opacity: 0 }}
+        initial={{ scale: 0.8, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
-        transition={{ type: "spring", duration: 1.2, bounce: 0.3 }}
+        transition={{ type: "spring", stiffness: 260, damping: 20 }}
     >
         <defs>
             <linearGradient id="cloudGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                <stop offset="0%" stopColor="#6366f1" />
-                <stop offset="50%" stopColor="#8b5cf6" />
-                <stop offset="100%" stopColor="#22d3ee" />
+                <stop offset="0%" stopColor="#818cf8" /> {/* Indigo-400 */}
+                <stop offset="100%" stopColor="#c084fc" /> {/* Purple-400 */}
             </linearGradient>
-            <filter id="cloudGlow" x="-50%" y="-50%" width="200%" height="200%">
-                <feGaussianBlur stdDeviation="4" result="blur" />
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="coloredBlur" />
                 <feMerge>
-                    <feMergeNode in="blur" />
+                    <feMergeNode in="coloredBlur" />
                     <feMergeNode in="SourceGraphic" />
                 </feMerge>
             </filter>
         </defs>
 
-        {/* Cloud body */}
+        {/* Cloud Body */}
         <motion.path
-            d="M95 50 
-         C105 50 112 42 112 33 
-         C112 24 105 16 95 16
-         C95 6 85 -2 72 -2
-         C62 -2 54 4 50 13
-         C46 10 40 8 34 8
-         C20 8 8 20 8 35
-         C8 50 20 62 34 62
-         L92 62
-         C98 62 105 56 105 50
-         Z"
+            d="M95 50 C105 50 112 42 112 33 C112 24 105 16 95 16 C95 6 85 -2 72 -2 C62 -2 54 4 50 13 C46 10 40 8 34 8 C20 8 8 20 8 35 C8 50 20 62 34 62 L92 62 C98 62 105 56 105 50 Z"
             fill="url(#cloudGradient)"
-            filter="url(#cloudGlow)"
-            initial={{ pathLength: 0, opacity: 0 }}
-            animate={{ pathLength: 1, opacity: 0.95 }}
-            transition={{ duration: 1.5, delay: 0.2 }}
+            filter="url(#glow)"
+            initial={{ opacity: 0, scale: 0.9 }}
+            animate={{ opacity: 0.9, scale: 1 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
         />
 
-        {/* Upload arrow */}
-        <motion.g
-            initial={{ y: 10, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.8 }}
-        >
-            <motion.path
-                d="M60 25 L60 48"
-                stroke="white"
-                strokeWidth="5"
-                strokeLinecap="round"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 0.5, delay: 1 }}
-            />
-            <motion.path
-                d="M50 35 L60 25 L70 35"
-                stroke="white"
-                strokeWidth="5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                fill="none"
-                initial={{ pathLength: 0 }}
-                animate={{ pathLength: 1 }}
-                transition={{ duration: 0.4, delay: 1.2 }}
-            />
-        </motion.g>
-
-        {/* Connection nodes */}
-        <motion.g
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.5 }}
-        >
-            <motion.circle
-                cx="30" cy="80" r="5"
-                fill="#6366f1"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0 }}
-            />
-            <motion.circle
-                cx="60" cy="88" r="5"
-                fill="#8b5cf6"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
-            />
-            <motion.circle
-                cx="90" cy="80" r="5"
-                fill="#22d3ee"
-                animate={{ scale: [1, 1.2, 1] }}
-                transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
-            />
-
-            {/* Connection lines */}
-            <motion.line x1="30" y1="80" x2="60" y2="88" stroke="url(#cloudGradient)" strokeWidth="2" opacity="0.4" />
-            <motion.line x1="60" y1="88" x2="90" y2="80" stroke="url(#cloudGradient)" strokeWidth="2" opacity="0.4" />
-            <motion.line x1="60" y1="62" x2="60" y2="88" stroke="url(#cloudGradient)" strokeWidth="2" opacity="0.3" strokeDasharray="4 4" />
+        {/* Connection Dots - symbolizing P2P */}
+        <motion.g>
+            <motion.circle cx="40" cy="35" r="3" fill="white" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, repeat: Infinity, delay: 0 }} />
+            <motion.circle cx="80" cy="30" r="3" fill="white" animate={{ opacity: [0.3, 1, 0.3] }} transition={{ duration: 2, repeat: Infinity, delay: 0.5 }} />
+            <motion.line x1="40" y1="35" x2="80" y2="30" stroke="white" strokeWidth="1" strokeDasharray="4 4" strokeOpacity="0.5" />
         </motion.g>
     </motion.svg>
 )
 
 const Hero = ({ onSendClick, onReceiveClick }) => {
     return (
-        <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="min-h-full flex flex-col items-center justify-center px-4 py-8 md:py-12"
-        >
-            {/* Floating decorative elements */}
+        <div className="relative min-h-full flex flex-col items-center justify-center p-6 md:p-12 overflow-hidden">
+
+            {/* Background Ambient Glows */}
+            <div className="absolute top-[-20%] left-[-10%] w-[500px] h-[500px] bg-primary/20 rounded-full blur-[120px] pointer-events-none" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[120px] pointer-events-none" />
+
+            {/* Main Content Container */}
             <motion.div
-                className="absolute top-20 left-10 w-48 md:w-72 h-48 md:h-72 bg-primary/10 rounded-full blur-3xl pointer-events-none"
-                animate={{ y: [0, -20, 0], scale: [1, 1.1, 1] }}
-                transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
-            />
-            <motion.div
-                className="absolute bottom-20 right-10 w-64 md:w-96 h-64 md:h-96 bg-secondary/10 rounded-full blur-3xl pointer-events-none"
-                animate={{ y: [0, 20, 0], scale: [1.1, 1, 1.1] }}
-                transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
-            />
-
-            {/* Cloud Logo */}
-            <motion.div
-                className="relative mb-4 md:mb-6"
-                animate={{ y: [0, -8, 0] }}
-                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.8 }}
+                className="relative z-10 flex flex-col items-center text-center max-w-4xl mx-auto"
             >
-                <CloudLogo />
-                {/* Glow behind logo */}
-                <motion.div
-                    className="absolute inset-0 bg-primary/20 blur-2xl rounded-full -z-10"
-                    animate={{ scale: [1, 1.15, 1], opacity: [0.4, 0.2, 0.4] }}
-                    transition={{ duration: 3, repeat: Infinity }}
-                />
-            </motion.div>
+                <div className="mb-8">
+                    <CloudLogo />
+                </div>
 
-            {/* Title */}
-            <motion.h1
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.5 }}
-                className="text-4xl md:text-6xl lg:text-7xl font-bold text-center mb-2 md:mb-4"
-            >
-                <span className="gradient-text">AirNode</span>
-            </motion.h1>
-
-            {/* Tagline */}
-            <motion.p
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="text-lg md:text-2xl text-slate-400 text-center mb-1 md:mb-2"
-            >
-                Secure P2P File Share
-            </motion.p>
-
-            <motion.p
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.7 }}
-                className="text-xs md:text-base text-slate-500 text-center max-w-sm md:max-w-md mb-8 md:mb-12 px-4"
-            >
-                Transfer files instantly between devices. No servers, no limits, maximum privacy.
-            </motion.p>
-
-            {/* Feature badges */}
-            <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 0.8 }}
-                className="flex flex-wrap justify-center gap-2 md:gap-3 mb-8 md:mb-12 px-4"
-            >
-                {['No Upload', 'Encrypted', 'Unlimited'].map((feature, i) => (
-                    <motion.span
-                        key={feature}
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.9 + i * 0.1, type: "spring" }}
-                        className="px-3 md:px-4 py-1.5 md:py-2 rounded-full glass text-xs md:text-sm text-slate-300 flex items-center gap-2"
-                    >
-                        <span className="w-1.5 h-1.5 md:w-2 md:h-2 rounded-full bg-success animate-pulse" />
-                        {feature}
-                    </motion.span>
-                ))}
-            </motion.div>
-
-            {/* Action buttons */}
-            <motion.div
-                initial={{ y: 30, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 1 }}
-                className="flex flex-col sm:flex-row gap-3 md:gap-4 w-full max-w-sm sm:max-w-none sm:w-auto px-4"
-            >
-                <motion.button
-                    onClick={onSendClick}
-                    whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(99, 102, 241, 0.4)" }}
-                    whileTap={{ scale: 0.95 }}
-                    className="group relative px-6 md:px-8 py-3 md:py-4 rounded-xl bg-gradient-to-r from-primary to-primary-light text-white font-semibold text-base md:text-lg overflow-hidden w-full sm:w-auto"
+                <motion.h1
+                    className="text-5xl md:text-7xl font-extrabold tracking-tight mb-4 text-transparent bg-clip-text bg-gradient-to-r from-indigo-200 via-white to-indigo-200"
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.2 }}
                 >
-                    <span className="relative z-10 flex items-center justify-center gap-2 md:gap-3">
-                        <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                    AirNode
+                </motion.h1>
+
+                <motion.p
+                    className="text-lg md:text-2xl text-slate-400 font-medium mb-12 max-w-2xl leading-relaxed"
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3 }}
+                >
+                    Seamlessly transfer files directly between devices. <br className="hidden md:block" />
+                    <span className="text-slate-500">No servers. No limits. Just P2P.</span>
+                </motion.p>
+
+                {/* Main Actions */}
+                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto mb-16">
+                    <motion.button
+                        onClick={onSendClick}
+                        whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(99, 102, 241, 0.5)" }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-8 py-4 bg-gradient-to-r from-primary to-primary-light text-white rounded-2xl font-bold text-lg shadow-lg shadow-primary/25 border border-white/10 flex items-center justify-center gap-3 transition-all"
+                    >
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                         </svg>
                         Send File
-                    </span>
-                    <motion.div
-                        className="absolute inset-0 bg-white/20"
-                        initial={{ x: "-100%" }}
-                        whileHover={{ x: "100%" }}
-                        transition={{ duration: 0.5 }}
-                    />
-                </motion.button>
+                    </motion.button>
 
-                <motion.button
-                    onClick={onReceiveClick}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="group px-6 md:px-8 py-3 md:py-4 rounded-xl glass glow-hover text-white font-semibold text-base md:text-lg flex items-center justify-center gap-2 md:gap-3 w-full sm:w-auto"
-                >
-                    <svg className="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
-                    </svg>
-                    Receive File
-                </motion.button>
-            </motion.div>
+                    <motion.button
+                        onClick={onReceiveClick}
+                        whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.1)" }}
+                        whileTap={{ scale: 0.95 }}
+                        className="px-8 py-4 bg-white/5 backdrop-blur-md text-white rounded-2xl font-bold text-lg border border-white/10 hover:border-white/20 flex items-center justify-center gap-3 transition-all"
+                    >
+                        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                        </svg>
+                        Receive File
+                    </motion.button>
+                </div>
 
-            {/* How it works */}
-            <motion.div
-                initial={{ y: 50, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 1.2 }}
-                className="mt-12 md:mt-20 w-full max-w-4xl px-4"
-            >
-                <h2 className="text-xl md:text-2xl font-semibold text-center mb-6 md:mb-8 text-slate-300">How it works</h2>
-                <div className="grid grid-cols-3 gap-3 md:gap-6">
+                {/* Features Grid */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 w-full text-left">
                     {[
-                        { icon: "🔗", title: "Connect", desc: "Share link or QR" },
-                        { icon: "📁", title: "Select", desc: "Choose files" },
-                        { icon: "⚡", title: "Transfer", desc: "Direct P2P" }
-                    ].map((step, i) => (
+                        { title: "Direct P2P", desc: "Data flows directly between devices.", icon: "⚡" },
+                        { title: "Secure", desc: "End-to-end encrypted connection.", icon: "🔒" },
+                        { title: "Private", desc: "No file ever touches our servers.", icon: "🛡️" }
+                    ].map((feature, i) => (
                         <motion.div
-                            key={step.title}
-                            initial={{ y: 30, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 1.3 + i * 0.15 }}
-                            whileHover={{ y: -5, scale: 1.02 }}
-                            className="glass rounded-xl md:rounded-2xl p-3 md:p-6 text-center glow-hover transition-all cursor-default"
+                            key={i}
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ delay: 0.5 + (i * 0.1) }}
+                            className="p-6 rounded-2xl bg-surface-light/50 border border-white/5 hover:border-white/10 transition-colors backdrop-blur-sm"
                         >
-                            <div className="text-2xl md:text-4xl mb-2 md:mb-4">{step.icon}</div>
-                            <h3 className="text-sm md:text-lg font-semibold mb-1 md:mb-2">{step.title}</h3>
-                            <p className="text-slate-400 text-xs md:text-sm hidden sm:block">{step.desc}</p>
+                            <div className="text-3xl mb-3">{feature.icon}</div>
+                            <h3 className="text-white font-semibold mb-1">{feature.title}</h3>
+                            <p className="text-slate-400 text-sm">{feature.desc}</p>
                         </motion.div>
                     ))}
                 </div>
             </motion.div>
 
-            {/* Footer */}
-            <motion.footer
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 1.6 }}
-                className="mt-12 md:mt-20 text-center text-slate-500 text-xs md:text-sm px-4"
-            >
-                <p>Powered by WebRTC • No data stored on servers</p>
-            </motion.footer>
-        </motion.div>
+            <footer className="absolute bottom-4 text-slate-600 text-xs text-center w-full">
+                AirNode © {new Date().getFullYear()} • Open Source
+            </footer>
+        </div>
     )
 }
 

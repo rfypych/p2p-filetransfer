@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useRef } from 'react'
 import { AnimatePresence } from 'framer-motion'
 import Hero from './components/Hero'
 import FileDropZone from './components/FileDropZone'
@@ -7,30 +7,31 @@ import ProgressBar from './components/ProgressBar'
 import TransferComplete from './components/TransferComplete'
 import ReceiveOptions from './components/ReceiveOptions'
 import Particles from './components/Particles'
-import { usePeer } from './hooks/usePeer'
+import { useP2P } from './hooks/useP2P'
 
 function App() {
     const [selectedFile, setSelectedFile] = useState(null)
     const [mode, setMode] = useState('home') // 'home' | 'send' | 'receive-options' | 'receive'
+    const hasAutoConnected = useRef(false)
 
     const {
+        status: connectionState, // Map status to connectionState
         peerId,
-        connectionState,
         remotePeerId,
-        transferProgress,
-        transferSpeed,
+        progress: transferProgress,
+        speed: transferSpeed,
         receivedFile,
         error,
-        createPeer,
-        connectToPeer,
+        initialize,
+        connect,
         sendFile,
-        resetTransfer
-    } = usePeer()
+        reset
+    } = useP2P()
 
     const handleSendMode = useCallback(() => {
         setMode('send')
-        createPeer()
-    }, [createPeer])
+        initialize()
+    }, [initialize])
 
     const handleReceiveOptionsMode = useCallback(() => {
         setMode('receive-options')
@@ -38,8 +39,8 @@ function App() {
 
     const handleReceiveMode = useCallback((id) => {
         setMode('receive')
-        connectToPeer(id)
-    }, [connectToPeer])
+        connect(id)
+    }, [connect])
 
     const handleFileSelect = useCallback((file) => {
         setSelectedFile(file)
@@ -51,20 +52,35 @@ function App() {
     const handleReset = useCallback(() => {
         setSelectedFile(null)
         setMode('home')
-        resetTransfer()
-    }, [resetTransfer])
+        reset()
+    }, [reset])
 
     // Check if we have a peer ID in the URL (receiver mode)
     useEffect(() => {
+        if (hasAutoConnected.current) return;
+
         const urlParams = new URLSearchParams(window.location.search)
         const connectId = urlParams.get('connect')
         if (connectId) {
-            handleReceiveMode(connectId)
+            hasAutoConnected.current = true;
+            // Delay slightly to ensure component mounted and avoid sync state update warning
+            setTimeout(() => {
+                handleReceiveMode(connectId)
+            }, 0)
         }
     }, [handleReceiveMode])
 
+    // Detect completion via receivedFile for Receiver,
+    // BUT for Sender we need to know when transfer is done.
+    // The P2PClient resets to 'connected' after send.
+    // We might need a 'complete' state wrapper in the component or listen to 100% progress.
+    // Let's use a derived state for "Complete View".
+
+    const isTransferComplete = (mode === 'send' && transferProgress === 100 && connectionState === 'connected') ||
+                               (mode === 'receive' && receivedFile);
+
     return (
-        <div className="h-full bg-background bg-grid bg-radial-glow relative overflow-hidden">
+        <div className="h-full bg-background bg-grid bg-radial-glow relative overflow-hidden text-white font-sans">
             <Particles />
 
             <div className="relative z-10 h-full overflow-y-auto">
@@ -85,7 +101,7 @@ function App() {
                         />
                     )}
 
-                    {(mode === 'send' || mode === 'receive') && connectionState !== 'complete' && (
+                    {(mode === 'send' || mode === 'receive') && !isTransferComplete && (
                         <div key="transfer" className="min-h-full flex items-center justify-center p-4">
                             <div className="w-full max-w-2xl space-y-6">
                                 <ConnectionPanel
@@ -116,7 +132,7 @@ function App() {
                         </div>
                     )}
 
-                    {connectionState === 'complete' && (
+                    {isTransferComplete && (
                         <TransferComplete
                             key="complete"
                             mode={mode}
