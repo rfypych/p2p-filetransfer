@@ -1,5 +1,6 @@
 import { motion } from 'framer-motion'
 import { formatFileSize } from '../utils/fileUtils'
+import { FaFolder, FaLock } from 'react-icons/fa'
 
 const TransferComplete = ({ mode, file, onReset }) => {
     return (
@@ -98,8 +99,8 @@ const TransferComplete = ({ mode, file, onReset }) => {
                         className="glass rounded-2xl p-6 mb-8"
                     >
                         <div className="flex items-center gap-4">
-                            <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center text-2xl">
-                                📁
+                            <div className="w-14 h-14 rounded-xl bg-primary/20 flex items-center justify-center">
+                                <FaFolder className="w-6 h-6 text-primary" />
                             </div>
                             <div className="text-left flex-1 min-w-0">
                                 <h4 className="font-semibold truncate">{file.name}</h4>
@@ -147,7 +148,10 @@ const TransferComplete = ({ mode, file, onReset }) => {
                     transition={{ delay: 1 }}
                     className="mt-12 text-sm text-slate-500"
                 >
-                    🔒 Transfer completed with end-to-end encryption
+                    <span className="flex items-center justify-center gap-2">
+                        <FaLock className="w-3 h-3" />
+                        Transfer completed with end-to-end encryption
+                    </span>
                 </motion.p>
             </div>
         </motion.div>

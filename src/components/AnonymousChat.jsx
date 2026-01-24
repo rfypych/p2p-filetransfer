@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { formatBytes } from '../utils/fileUtils'
+import { FaLock } from 'react-icons/fa'
 
 export default function AnonymousChat({
     messages,
@@ -78,7 +79,7 @@ export default function AnonymousChat({
                     <div>
                         <h3 className="text-white font-medium text-sm flex items-center gap-2">
                             {remotePeerId ? `Peer ${remotePeerId}` : 'Anonymous Peer'}
-                            <span className="text-green-400 text-xs" title="End-to-end encrypted">🔒</span>
+                            <FaLock className="w-3 h-3 text-green-400" title="End-to-end encrypted" />
                         </h3>
                         <p className="text-xs text-gray-500">
                             {connectionState === 'connected' ? 'Encrypted P2P Connection' : connectionState}
@@ -114,7 +115,7 @@ export default function AnonymousChat({
                                 {msg.text}
                             </span>
                         ) : msg.type === 'message' ? (
-                            <div className={`px-4 py-2 rounded-2xl text-sm leading-relaxed ${msg.isSelf
+                            <div className={`px-4 py-2 rounded-2xl text-sm leading-relaxed break-words ${msg.isSelf
                                 ? 'bg-white text-black rounded-tr-sm'
                                 : 'bg-[#1a1a1a] text-gray-200 rounded-tl-sm border border-white/5'
                                 }`}>

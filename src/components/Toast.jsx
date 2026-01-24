@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
+import { useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import { FaCheck, FaTimes, FaExclamationTriangle, FaComment } from 'react-icons/fa'
 
 export default function Toast({ message, type = 'info', duration = 3000, onClose }) {
     useEffect(() => {
@@ -16,11 +17,11 @@ export default function Toast({ message, type = 'info', duration = 3000, onClose
         error: 'bg-red-600/90'
     }[type]
 
-    const icon = {
-        info: '💬',
-        success: '✓',
-        warning: '⚠',
-        error: '✕'
+    const IconComponent = {
+        info: FaComment,
+        success: FaCheck,
+        warning: FaExclamationTriangle,
+        error: FaTimes
     }[type]
 
     return (
@@ -30,7 +31,7 @@ export default function Toast({ message, type = 'info', duration = 3000, onClose
             exit={{ opacity: 0, y: -20, scale: 0.9 }}
             className={`${bgColor} text-white px-4 py-3 rounded-lg shadow-2xl flex items-center gap-3 min-w-[280px] backdrop-blur-sm border border-white/10`}
         >
-            <span className="text-lg">{icon}</span>
+            <IconComponent className="w-4 h-4" />
             <span className="text-sm font-medium">{message}</span>
         </motion.div>
     )

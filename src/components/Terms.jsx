@@ -24,7 +24,7 @@ export default function Terms({ onBack }) {
 
                 {/* Agreement */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">📜 Agreement to Terms</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Agreement to Terms</h2>
                     <p>
                         By accessing or using AirNode ("the Service"), you agree to be bound by these Terms of Service.
                         If you disagree with any part of these terms, you may not access the Service.
@@ -33,7 +33,7 @@ export default function Terms({ onBack }) {
 
                 {/* Description */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">🌐 Service Description</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Service Description</h2>
                     <p className="mb-3">
                         AirNode is a peer-to-peer file transfer and anonymous chat application. The Service enables:
                     </p>
@@ -50,7 +50,7 @@ export default function Terms({ onBack }) {
 
                 {/* Acceptable Use */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">✅ Acceptable Use</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Acceptable Use</h2>
                     <p className="mb-3">You agree to use the Service only for lawful purposes. You must NOT:</p>
                     <ul className="list-disc list-inside space-y-2 ml-2">
                         <li>Transfer illegal content including but not limited to: child exploitation material, malware, stolen data, or pirated copyrighted content</li>
@@ -64,7 +64,7 @@ export default function Terms({ onBack }) {
 
                 {/* Anonymity */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">🎭 Anonymity & Responsibility</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Anonymity & Responsibility</h2>
                     <p className="mb-3">
                         While AirNode provides anonymous communication features, <strong className="text-white">anonymity
                             does not mean impunity</strong>. You remain legally responsible for your actions.
@@ -77,7 +77,7 @@ export default function Terms({ onBack }) {
 
                 {/* No Warranty */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">⚠️ Disclaimer of Warranties</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Disclaimer of Warranties</h2>
                     <p className="mb-3">
                         The Service is provided <strong className="text-white">"AS IS"</strong> and
                         <strong className="text-white"> "AS AVAILABLE"</strong> without warranties of any kind,
@@ -93,7 +93,7 @@ export default function Terms({ onBack }) {
 
                 {/* Limitation of Liability */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">🛡️ Limitation of Liability</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Limitation of Liability</h2>
                     <p className="mb-3">
                         To the maximum extent permitted by law, the developers and operators of AirNode shall not
                         be liable for any:
@@ -108,7 +108,7 @@ export default function Terms({ onBack }) {
 
                 {/* Data Loss */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">💾 Data Loss & Transfer Failures</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Data Loss & Transfer Failures</h2>
                     <p>
                         We are not responsible for failed transfers, corrupted files, or data loss.
                         P2P connections depend on network conditions beyond our control. Always keep
@@ -118,7 +118,7 @@ export default function Terms({ onBack }) {
 
                 {/* Security */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">🔐 Security</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Security</h2>
                     <p className="mb-3">
                         While we implement strong encryption (AES-256-GCM, DTLS), no system is 100% secure.
                         You acknowledge that:
@@ -132,7 +132,7 @@ export default function Terms({ onBack }) {
 
                 {/* Third Party */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">🔗 Third-Party Services</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Third-Party Services</h2>
                     <p>
                         The Service relies on third-party infrastructure (PeerJS, Firebase, STUN servers).
                         We are not responsible for the availability, security, or policies of these services.
@@ -142,7 +142,7 @@ export default function Terms({ onBack }) {
 
                 {/* Modifications */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">📝 Modifications to Terms</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Modifications to Terms</h2>
                     <p>
                         We reserve the right to modify these terms at any time. Continued use of the Service
                         after changes constitutes acceptance of the new terms. We recommend reviewing this
@@ -152,7 +152,7 @@ export default function Terms({ onBack }) {
 
                 {/* Termination */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">🚪 Termination</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Termination</h2>
                     <p>
                         We may terminate or suspend access to the Service immediately, without prior notice,
                         for any reason including breach of these Terms. Since we don't have user accounts,
@@ -162,7 +162,7 @@ export default function Terms({ onBack }) {
 
                 {/* Governing Law */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">⚖️ Governing Law</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Governing Law</h2>
                     <p>
                         These Terms shall be governed by and construed in accordance with applicable laws,
                         without regard to conflict of law provisions. Any disputes shall be resolved through
@@ -172,7 +172,7 @@ export default function Terms({ onBack }) {
 
                 {/* Contact */}
                 <section className="border-t border-white/10 pt-6">
-                    <h2 className="text-white text-lg font-serif mb-3">📧 Contact</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Contact</h2>
                     <p>
                         For questions about these Terms, please contact us through the project's GitHub repository.
                     </p>

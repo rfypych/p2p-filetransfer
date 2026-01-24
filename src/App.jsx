@@ -9,6 +9,7 @@ import TransferComplete from './components/TransferComplete'
 import ReceiveOptions from './components/ReceiveOptions'
 import Privacy from './components/Privacy'
 import Terms from './components/Terms'
+import TechStack from './components/TechStack'
 import Footer from './components/Footer'
 import Lobby from './components/Lobby'
 import AnonymousChat from './components/AnonymousChat'
@@ -18,7 +19,7 @@ import { addToLobby, subscribeToLobby, removeFromLobby, sendGlobalMessage, subsc
 
 function App() {
     const [selectedFile, setSelectedFile] = useState(null)
-    const [mode, setMode] = useState('home') // 'home' | 'send' | 'receive-options' | 'receive' | 'privacy' | 'terms' | 'anonymous'
+    const [mode, setMode] = useState('home') // 'home' | 'send' | 'receive-options' | 'receive' | 'privacy' | 'terms' | 'techstack' | 'anonymous'
     const hasAutoConnected = useRef(false)
 
     // Anonymous Mode / Lobby State
@@ -289,6 +290,10 @@ function App() {
                             <Terms key="terms" onBack={handleReset} />
                         )}
 
+                        {mode === 'techstack' && (
+                            <TechStack key="techstack" onBack={handleReset} />
+                        )}
+
                         {mode === 'anonymous' && (
                             showPrivateChat ? (
                                 <AnonymousChat
@@ -311,6 +316,7 @@ function App() {
                                     onSendGlobalMessage={handleSendGlobalMessage}
                                     onConnect={(id) => connect(id)}
                                     onCancel={handleReset}
+                                    showToast={addToast}
                                 />
                             )
                         )}
@@ -367,6 +373,10 @@ function App() {
                 onTermsClick={() => {
                     handleReset()
                     setMode('terms')
+                }}
+                onTechStackClick={() => {
+                    handleReset()
+                    setMode('techstack')
                 }}
             />
         </div>

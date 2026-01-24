@@ -1,33 +1,44 @@
-export default function Footer({ onPrivacyClick, onTermsClick }) {
-    return (
-        <footer className="px-6 py-4 sm:px-8 sm:py-6 md:px-12 md:py-8 bg-[#080808] border-t border-white/5 text-[10px] sm:text-xs text-gray-600 flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-0 transition-colors duration-500 hover:text-gray-500">
-            <div className="flex gap-2 sm:gap-4">
-                <span>&copy; {new Date().getFullYear()} AirNode</span>
-                <span className="hidden sm:inline">•</span>
-                <span className="hidden sm:inline">Serverless WebRTC</span>
-            </div>
+import { FaGithub } from 'react-icons/fa';
 
-            <div className="flex gap-4 sm:gap-6">
-                <a
-                    href="https://github.com/rfypych/p2p-filetransfer"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="hover:text-white cursor-pointer transition-colors"
-                >
-                    GitHub
-                </a>
-                <button
-                    onClick={onPrivacyClick}
-                    className="hover:text-white cursor-pointer transition-colors bg-transparent border-none p-0 text-[10px] sm:text-xs text-gray-600 font-sans"
-                >
-                    Privacy
-                </button>
-                <button
-                    onClick={onTermsClick}
-                    className="hover:text-white cursor-pointer transition-colors bg-transparent border-none p-0 text-[10px] sm:text-xs text-gray-600 font-sans"
-                >
-                    Terms
-                </button>
+export default function Footer({ onPrivacyClick, onTermsClick, onTechStackClick }) {
+    return (
+        <footer className="px-6 py-5 sm:px-8 sm:py-6 md:px-12 md:py-8 bg-[#080808] border-t border-white/5 text-sm text-gray-500 transition-colors duration-500">
+            <div className="flex flex-col sm:flex-row justify-between items-center gap-4 sm:gap-0">
+                <div className="flex items-center gap-3 sm:gap-4">
+                    <span className="font-medium text-gray-400">&copy; {new Date().getFullYear()} AirNode</span>
+                    <span className="hidden sm:inline text-white/20">|</span>
+                    <span className="hidden sm:inline text-gray-600">Serverless • Encrypted • P2P</span>
+                </div>
+
+                <div className="flex gap-5 sm:gap-6">
+                    <a
+                        href="https://github.com/rfypych/p2p-filetransfer"
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-2 text-gray-500 hover:text-white transition-colors"
+                    >
+                        <FaGithub className="w-4 h-4" />
+                        <span>GitHub</span>
+                    </a>
+                    <button
+                        onClick={onTechStackClick}
+                        className="text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer"
+                    >
+                        Tech Stack
+                    </button>
+                    <button
+                        onClick={onPrivacyClick}
+                        className="text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer"
+                    >
+                        Privacy
+                    </button>
+                    <button
+                        onClick={onTermsClick}
+                        className="text-gray-500 hover:text-white transition-colors bg-transparent border-none p-0 cursor-pointer"
+                    >
+                        Terms
+                    </button>
+                </div>
             </div>
         </footer>
     )

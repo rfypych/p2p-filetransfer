@@ -24,7 +24,7 @@ export default function Privacy({ onBack }) {
 
                 {/* Introduction */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">🔒 Our Privacy Commitment</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Our Privacy Commitment</h2>
                     <p className="mb-3">
                         AirNode is built with <strong className="text-white">privacy-first architecture</strong>.
                         We believe your files and conversations belong to you—not us, not advertisers, not anyone else.
@@ -37,7 +37,7 @@ export default function Privacy({ onBack }) {
 
                 {/* Data We DON'T Collect */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">🚫 Data We Do NOT Collect</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Data We Do NOT Collect</h2>
                     <ul className="list-disc list-inside space-y-2 ml-2">
                         <li><strong className="text-gray-300">File Contents</strong> — Your files transfer directly between devices via WebRTC. We never see, store, or process your files.</li>
                         <li><strong className="text-gray-300">Message Contents</strong> — All P2P chat messages are encrypted with AES-256-GCM. Even we cannot read them.</li>
@@ -49,7 +49,7 @@ export default function Privacy({ onBack }) {
 
                 {/* What We Use */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">📡 Technical Infrastructure</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Technical Infrastructure</h2>
                     <div className="space-y-4">
                         <div>
                             <h3 className="text-gray-300 font-medium mb-1">Signaling Server (PeerJS)</h3>
@@ -78,7 +78,7 @@ export default function Privacy({ onBack }) {
 
                 {/* Encryption */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">🔐 Encryption Standards</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Encryption Standards</h2>
                     <ul className="list-disc list-inside space-y-2 ml-2">
                         <li><strong className="text-gray-300">P2P Messages:</strong> AES-256-GCM with per-session key exchange</li>
                         <li><strong className="text-gray-300">File Transfer:</strong> DTLS 1.2+ (WebRTC built-in encryption)</li>
@@ -89,7 +89,7 @@ export default function Privacy({ onBack }) {
 
                 {/* Local Storage */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">💾 Local Browser Storage</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Local Browser Storage</h2>
                     <p>
                         We may store minimal preferences (like theme settings) in your browser's localStorage.
                         This data never leaves your device and can be cleared anytime through your browser settings.
@@ -98,7 +98,7 @@ export default function Privacy({ onBack }) {
 
                 {/* Third Parties */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">🤝 Third-Party Services</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Third-Party Services</h2>
                     <p className="mb-3">We use the following third-party services:</p>
                     <ul className="list-disc list-inside space-y-2 ml-2">
                         <li><strong className="text-gray-300">PeerJS Cloud:</strong> Signaling server for WebRTC connections</li>
@@ -112,7 +112,7 @@ export default function Privacy({ onBack }) {
 
                 {/* Your Rights */}
                 <section>
-                    <h2 className="text-white text-lg font-serif mb-3">⚖️ Your Rights</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Your Rights</h2>
                     <p>
                         Since we don't collect personal data, there's nothing to request access to or delete.
                         Your privacy is protected by design, not by policy compliance.
@@ -121,7 +121,7 @@ export default function Privacy({ onBack }) {
 
                 {/* Contact */}
                 <section className="border-t border-white/10 pt-6">
-                    <h2 className="text-white text-lg font-serif mb-3">📧 Questions?</h2>
+                    <h2 className="text-white text-lg font-serif mb-3">Questions?</h2>
                     <p>
                         If you have questions about this privacy policy or our practices,
                         feel free to reach out via the project's GitHub repository.

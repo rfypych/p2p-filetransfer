@@ -1,4 +1,5 @@
 import { motion } from 'framer-motion'
+import { FaUserSecret } from 'react-icons/fa'
 
 const Hero = ({ onSendClick, onReceiveClick, onAnonymousClick }) => {
     return (
@@ -46,7 +47,7 @@ const Hero = ({ onSendClick, onReceiveClick, onAnonymousClick }) => {
                     onClick={onAnonymousClick}
                     className="w-full sm:w-auto px-6 py-3 border border-white/10 bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white rounded text-sm transition-all flex items-center justify-center gap-2 group"
                 >
-                    <span className="text-lg">🕵️</span>
+                    <FaUserSecret className="w-5 h-5" />
                     <span>Start Anonymous Chat</span>
                     <span className="opacity-0 group-hover:opacity-100 transition-opacity ml-1">→</span>
                 </button>
