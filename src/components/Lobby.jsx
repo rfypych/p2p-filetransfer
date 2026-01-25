@@ -1,12 +1,21 @@
 import { useState, useEffect, useRef } from 'react'
-import { motion } from 'framer-motion'
-import { FaClock } from 'react-icons/fa'
+import { motion, AnimatePresence } from 'framer-motion'
+import { FaClock, FaCheck, FaTimes, FaSpinner } from 'react-icons/fa'
 
-// Helper for avatars/colors
+// Helper for avatars/colors - deterministic based on peerId
 const getAvatarColor = (id) => {
-    const colors = ['bg-red-500', 'bg-blue-500', 'bg-green-500', 'bg-purple-500', 'bg-pink-500', 'bg-yellow-500', 'bg-indigo-500'];
+    const colors = [
+        'bg-red-500', 'bg-orange-500', 'bg-amber-500', 'bg-yellow-500',
+        'bg-lime-500', 'bg-green-500', 'bg-emerald-500', 'bg-teal-500',
+        'bg-cyan-500', 'bg-sky-500', 'bg-blue-500', 'bg-indigo-500',
+        'bg-violet-500', 'bg-purple-500', 'bg-fuchsia-500', 'bg-pink-500', 'bg-rose-500'
+    ];
+    // Simple but deterministic hash
     let hash = 0;
-    for (let i = 0; i < id.length; i++) hash = id.charCodeAt(i) + ((hash << 5) - hash);
+    for (let i = 0; i < id.length; i++) {
+        hash = ((hash << 5) - hash) + id.charCodeAt(i);
+        hash = hash & hash; // Convert to 32bit integer
+    }
     return colors[Math.abs(hash) % colors.length];
 }
 
@@ -20,9 +29,13 @@ export default function Lobby({
     onlineUsers,
     messages,
     onSendGlobalMessage,
-    onConnect,
+    onRequestConnect,
     onCancel,
-    showToast
+    showToast,
+    incomingRequest,
+    onAcceptRequest,
+    onDeclineRequest,
+    pendingRequest
 }) {
     const [inputValue, setInputValue] = useState('')
     const [searchQuery, setSearchQuery] = useState('')
@@ -75,8 +88,54 @@ export default function Lobby({
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="w-full h-[80vh] min-h-[500px] bg-[#0a0a0a] border border-white/5 rounded-xl shadow-2xl flex flex-col overflow-hidden"
+            className="w-full h-[80vh] min-h-[500px] bg-[#0a0a0a] border border-white/5 rounded-xl shadow-2xl flex flex-col overflow-hidden relative"
         >
+            {/* Incoming Request Modal */}
+            <AnimatePresence>
+                {incomingRequest && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="absolute inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4"
+                    >
+                        <motion.div
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            exit={{ scale: 0.9, opacity: 0 }}
+                            className="bg-[#1a1a1a] border border-white/10 rounded-2xl p-6 max-w-sm w-full text-center"
+                        >
+                            <div className={`w-16 h-16 mx-auto rounded-full ${getAvatarColor(incomingRequest.fromId)} flex items-center justify-center text-white font-bold text-xl mb-4`}>
+                                {incomingRequest.fromId.substring(0, 2).toUpperCase()}
+                            </div>
+                            <h3 className="text-white text-lg font-medium mb-2">Connection Request</h3>
+                            <p className="text-gray-400 text-sm mb-1">
+                                <span className="text-white font-mono">{incomingRequest.fromUsername}</span>
+                            </p>
+                            <p className="text-gray-500 text-xs mb-6">
+                                wants to connect with you
+                            </p>
+                            <div className="flex gap-3">
+                                <button
+                                    onClick={onDeclineRequest}
+                                    className="flex-1 py-3 bg-white/5 hover:bg-red-500/20 border border-white/10 hover:border-red-500/50 text-gray-400 hover:text-red-400 rounded-lg transition-all flex items-center justify-center gap-2"
+                                >
+                                    <FaTimes className="w-4 h-4" />
+                                    Decline
+                                </button>
+                                <button
+                                    onClick={onAcceptRequest}
+                                    className="flex-1 py-3 bg-green-600 hover:bg-green-500 text-white rounded-lg transition-all flex items-center justify-center gap-2"
+                                >
+                                    <FaCheck className="w-4 h-4" />
+                                    Accept
+                                </button>
+                            </div>
+                        </motion.div>
+                    </motion.div>
+                )}
+            </AnimatePresence>
+
             {/* Mobile Tabs - Fixed at top */}
             <div className="md:hidden flex border-b border-white/5 bg-[#0d0d0d] flex-shrink-0">
                 <button
@@ -149,20 +208,36 @@ export default function Lobby({
                                 {otherUsers.map(user => {
                                     const avatarColor = getAvatarColor(user.peerId);
                                     const username = formatUsername(user.peerId);
+                                    const isPending = pendingRequest?.toId === user.peerId;
                                     return (
                                         <button
                                             key={user.peerId}
-                                            onClick={() => onConnect(user.peerId)}
-                                            className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-white/5 transition-colors group text-left"
+                                            onClick={() => !isPending && onRequestConnect(user.peerId)}
+                                            disabled={isPending || !!pendingRequest}
+                                            className={`w-full flex items-center gap-3 p-3 rounded-lg transition-colors group text-left ${isPending
+                                                ? 'bg-yellow-500/10 border border-yellow-500/30'
+                                                : pendingRequest
+                                                    ? 'opacity-50 cursor-not-allowed'
+                                                    : 'hover:bg-white/5'
+                                                }`}
                                         >
                                             <div className={`w-10 h-10 rounded-full ${avatarColor} flex items-center justify-center text-white font-bold text-sm shadow-lg`}>
                                                 {user.peerId.substring(0, 2).toUpperCase()}
                                             </div>
                                             <div className="flex-1 min-w-0">
                                                 <div className="text-gray-200 text-sm font-medium truncate">{username}</div>
-                                                <div className="text-xs text-gray-500 font-mono truncate">{user.peerId}</div>
+                                                {isPending ? (
+                                                    <div className="text-xs text-yellow-400 flex items-center gap-1">
+                                                        <FaSpinner className="w-3 h-3 animate-spin" />
+                                                        Waiting for response...
+                                                    </div>
+                                                ) : (
+                                                    <div className="text-xs text-gray-500 font-mono truncate">{user.peerId}</div>
+                                                )}
                                             </div>
-                                            <div className="w-2 h-2 rounded-full bg-green-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            {!isPending && !pendingRequest && (
+                                                <div className="w-2 h-2 rounded-full bg-green-500 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                            )}
                                         </button>
                                     )
                                 })}

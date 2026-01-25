@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app';
-import { getDatabase, ref, set, onValue, remove, get, child, push, onDisconnect, query, limitToLast } from 'firebase/database';
+import { getDatabase, ref, set, onValue, remove, get, child, push, onDisconnect, query, limitToLast, update } from 'firebase/database';
 
 // Firebase project configuration (loaded from environment variables)
 const firebaseConfig = {
@@ -194,6 +194,138 @@ export const subscribeToGlobalMessages = (onMessagesUpdate) => {
         } catch (e) {
             console.error('[Firebase] Error decrypting messages:', e);
             onMessagesUpdate([]);
+        }
+    });
+
+    return unsubscribe;
+};
+
+// ============ CONNECTION REQUEST SYSTEM ============
+
+export const sendConnectionRequest = async (fromId, toId, fromUsername) => {
+    if (!db) return { success: false, error: 'Database not available' };
+
+    const requestRef = ref(db, `connection_requests/${toId}`);
+    const newRequestRef = push(requestRef);
+
+    const requestData = {
+        fromId,
+        fromUsername: fromUsername || `User_${fromId}`,
+        toId,
+        timestamp: Date.now(),
+        status: 'pending'
+    };
+
+    try {
+        await set(newRequestRef, requestData);
+        // Auto-delete request after 30 seconds if no response
+        setTimeout(async () => {
+            try {
+                await remove(newRequestRef);
+            } catch (e) {
+                // Ignore if already removed
+            }
+        }, 30000);
+        return { success: true, requestKey: newRequestRef.key };
+    } catch (e) {
+        console.error('[Firebase] Error sending connection request:', e);
+        return { success: false, error: 'Failed to send request' };
+    }
+};
+
+export const subscribeToConnectionRequests = (myPeerId, onRequestReceived) => {
+    if (!db || !myPeerId) return () => { };
+
+    const requestsRef = ref(db, `connection_requests/${myPeerId}`);
+
+    const unsubscribe = onValue(requestsRef, (snapshot) => {
+        const data = snapshot.val();
+        if (!data) {
+            onRequestReceived(null);
+            return;
+        }
+
+        // Get the first pending request
+        const entries = Object.entries(data);
+        const pendingRequest = entries.find(([key, val]) => val.status === 'pending');
+
+        if (pendingRequest) {
+            const [key, val] = pendingRequest;
+            onRequestReceived({ key, ...val });
+        } else {
+            onRequestReceived(null);
+        }
+    });
+
+    return unsubscribe;
+};
+
+export const respondToConnectionRequest = async (myPeerId, requestKey, accepted) => {
+    if (!db || !myPeerId || !requestKey) return { success: false };
+
+    console.log('[Firebase] Responding to request at:', `connection_requests/${myPeerId}/${requestKey}`, 'accepted:', accepted);
+
+    const requestRef = ref(db, `connection_requests/${myPeerId}/${requestKey}`);
+
+    try {
+        if (accepted) {
+            // Update status to 'accepted' so the sender's listener can detect it
+            console.log('[Firebase] Updating status to accepted...');
+            await update(requestRef, { status: 'accepted' });
+            console.log('[Firebase] Status updated to accepted!');
+            // Remove after a short delay to allow listener to detect the change
+            setTimeout(() => remove(requestRef).catch(() => { }), 2000);
+        } else {
+            // Update status to 'declined' then remove
+            await update(requestRef, { status: 'declined' });
+            setTimeout(() => remove(requestRef).catch(() => { }), 2000);
+        }
+        return { success: true, accepted };
+    } catch (e) {
+        console.error('[Firebase] Error responding to request:', e);
+        return { success: false };
+    }
+};
+
+export const cancelConnectionRequest = async (toId, requestKey) => {
+    if (!db || !toId || !requestKey) return;
+    const requestRef = ref(db, `connection_requests/${toId}/${requestKey}`);
+    try {
+        await remove(requestRef);
+    } catch (e) {
+        console.error('[Firebase] Error cancelling request:', e);
+    }
+};
+
+export const listenForRequestResponse = (toId, requestKey, onResponse) => {
+    if (!db || !toId || !requestKey) return () => { };
+
+    console.log('[Firebase] Listening for response at:', `connection_requests/${toId}/${requestKey}`);
+
+    const requestRef = ref(db, `connection_requests/${toId}/${requestKey}`);
+    let hasResponded = false;
+
+    const unsubscribe = onValue(requestRef, (snapshot) => {
+        if (hasResponded) return;
+
+        const data = snapshot.val();
+        console.log('[Firebase] Response listener received data:', data);
+
+        if (data === null) {
+            console.log('[Firebase] Data is null, ignoring');
+            return;
+        }
+
+        if (data.status === 'accepted') {
+            console.log('[Firebase] Status is ACCEPTED, triggering connection');
+            hasResponded = true;
+            onResponse({ accepted: true });
+        } else if (data.status === 'declined') {
+            console.log('[Firebase] Status is DECLINED');
+            hasResponded = true;
+            onResponse({ accepted: false });
+        } else {
+            console.log('[Firebase] Status is still:', data.status);
         }
     });
 

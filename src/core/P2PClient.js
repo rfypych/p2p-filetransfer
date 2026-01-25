@@ -52,13 +52,22 @@ export class P2PClient extends EventTarget {
         if (this.peer) return;
 
         const id = generateId();
-        // Note: In a real app, we might want to pass config (ICE servers) here
+
+        // Use secure PeerJS server with fallback options
         this.peer = new Peer(id, {
             debug: 1,
+            // Try alternative PeerJS servers
+            host: '0.peerjs.com',
+            port: 443,
+            secure: true,
+            path: '/',
             config: {
                 iceServers: [
                     { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun1.l.google.com:19302' }
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' },
+                    { urls: 'stun:stun3.l.google.com:19302' },
+                    { urls: 'stun:stun4.l.google.com:19302' }
                 ]
             }
         });
@@ -66,6 +75,7 @@ export class P2PClient extends EventTarget {
         this.peer.on('open', (id) => {
             console.log('[P2P] Peer Opened:', id);
             this.peerId = id;
+            this.reconnectAttempts = 0; // Reset on successful connection
             this._setStatus('waiting');
         });
 
@@ -74,8 +84,25 @@ export class P2PClient extends EventTarget {
             this._handleConnection(conn);
         });
 
+        this.peer.on('disconnected', () => {
+            console.log('[P2P] Disconnected from server, attempting to reconnect...');
+            if (this.reconnectAttempts < 3) {
+                this.reconnectAttempts++;
+                setTimeout(() => {
+                    if (this.peer && !this.peer.destroyed) {
+                        this.peer.reconnect();
+                    }
+                }, 2000 * this.reconnectAttempts);
+            }
+        });
+
         this.peer.on('error', (err) => {
             console.error('[P2P] Peer Error:', err);
+            // Don't set error status for recoverable errors
+            if (err.type === 'disconnected' || err.type === 'network') {
+                console.log('[P2P] Recoverable error, will retry...');
+                return;
+            }
             this._setError(err.message || 'Peer connection error');
             this._setStatus('error');
         });

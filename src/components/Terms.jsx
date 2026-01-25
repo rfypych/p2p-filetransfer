@@ -75,6 +75,25 @@ export default function Terms({ onBack }) {
                     </p>
                 </section>
 
+                {/* Consent-Based Connections */}
+                <section>
+                    <h2 className="text-white text-lg font-serif mb-3">Consent-Based Connections</h2>
+                    <p className="mb-3">
+                        AirNode implements a <strong className="text-white">connection request system</strong> for your safety.
+                        Before any peer-to-peer connection is established:
+                    </p>
+                    <ul className="list-disc list-inside space-y-2 ml-2">
+                        <li>You must explicitly accept or decline incoming connection requests</li>
+                        <li>Connection requests display the sender's identifier for transparency</li>
+                        <li>Requests automatically expire after 30 seconds if not responded to</li>
+                        <li>You can decline any request without explanation</li>
+                    </ul>
+                    <p className="mt-3">
+                        This system is designed to prevent unwanted connections and potential malicious file transfers.
+                        <strong className="text-white"> Never accept connection requests from unknown or suspicious users.</strong>
+                    </p>
+                </section>
+
                 {/* No Warranty */}
                 <section>
                     <h2 className="text-white text-lg font-serif mb-3">Disclaimer of Warranties</h2>

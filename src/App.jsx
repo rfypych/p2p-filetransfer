@@ -15,7 +15,7 @@ import Lobby from './components/Lobby'
 import AnonymousChat from './components/AnonymousChat'
 import { ToastContainer } from './components/Toast'
 import { useP2P } from './hooks/useP2P'
-import { addToLobby, subscribeToLobby, removeFromLobby, sendGlobalMessage, subscribeToGlobalMessages, updateHeartbeat } from './services/firebase'
+import { addToLobby, subscribeToLobby, removeFromLobby, sendGlobalMessage, subscribeToGlobalMessages, updateHeartbeat, sendConnectionRequest, subscribeToConnectionRequests, respondToConnectionRequest, cancelConnectionRequest, listenForRequestResponse } from './services/firebase'
 
 function App() {
     const [selectedFile, setSelectedFile] = useState(null)
@@ -31,6 +31,20 @@ function App() {
     const prevRemotePeerId = useRef(null)
     const [showPrivateChat, setShowPrivateChat] = useState(false) // Debounced UI state
     const privateChatTimeoutRef = useRef(null)
+
+    // Connection Request State
+    const [incomingRequest, setIncomingRequest] = useState(null)
+    const [pendingRequest, setPendingRequest] = useState(null)
+
+    // Toast helpers (declared early for use in handlers)
+    const addToast = useCallback((message, type = 'info') => {
+        const id = Date.now()
+        setToasts(prev => [...prev, { id, message, type }])
+    }, [])
+
+    const removeToast = useCallback((id) => {
+        setToasts(prev => prev.filter(t => t.id !== id))
+    }, [])
 
     const {
         status: connectionState,
@@ -111,11 +125,22 @@ function App() {
     }, [mode, peerId, lobbyKey]);
 
     // Lobby Subscriptions (Users & Messages) + Heartbeat
+    // Lobby Subscriptions (Messages & Users) - Load immediately
+    useEffect(() => {
+        if (mode === 'anonymous') {
+            const unsubMsg = subscribeToGlobalMessages(setGlobalMessages);
+            const unsubUsers = subscribeToLobby(setOnlineUsers);
+
+            return () => {
+                unsubMsg();
+                unsubUsers();
+            };
+        }
+    }, [mode]);
+
+    // Lobby Presence (Heartbeat) - Requires LobbyKey (after PeerID)
     useEffect(() => {
         if (mode === 'anonymous' && lobbyKey) {
-            const unsubUsers = subscribeToLobby(setOnlineUsers);
-            const unsubMsg = subscribeToGlobalMessages(setGlobalMessages);
-
             // Send heartbeat every 30 seconds to stay visible
             const heartbeatInterval = setInterval(() => {
                 updateHeartbeat(lobbyKey);
@@ -125,8 +150,6 @@ function App() {
             updateHeartbeat(lobbyKey);
 
             return () => {
-                unsubUsers();
-                unsubMsg();
                 clearInterval(heartbeatInterval);
             };
         }
@@ -142,20 +165,74 @@ function App() {
     // Handle Global Message Send
     const handleSendGlobalMessage = useCallback((text) => {
         if (peerId) {
-            const username = "User_" + peerId.substring(0, 4);
-            sendGlobalMessage(text, peerId, username);
+            const username = `User_${peerId}`;
+            return sendGlobalMessage(text, peerId, username);
         }
     }, [peerId]);
 
-    // Toast helpers
-    const addToast = useCallback((message, type = 'info') => {
-        const id = Date.now()
-        setToasts(prev => [...prev, { id, message, type }])
-    }, [])
+    // Connection Request Handlers
+    const handleRequestConnect = useCallback(async (targetPeerId) => {
+        if (!peerId || pendingRequest) return;
 
-    const removeToast = useCallback((id) => {
-        setToasts(prev => prev.filter(t => t.id !== id))
-    }, [])
+        const username = `User_${peerId}`;
+        const result = await sendConnectionRequest(peerId, targetPeerId, username);
+
+        if (result.success) {
+            setPendingRequest({ toId: targetPeerId, requestKey: result.requestKey });
+            addToast('Connection request sent...', 'info');
+
+            // Listen for response
+            const unsubscribe = listenForRequestResponse(targetPeerId, result.requestKey, (response) => {
+                unsubscribe();
+                if (response.accepted) {
+                    addToast('Request accepted! Connecting...', 'success');
+                    connect(targetPeerId);
+                } else {
+                    addToast('Connection declined', 'warning');
+                }
+                setPendingRequest(null);
+            });
+
+            // Auto-cancel after 30 seconds
+            setTimeout(() => {
+                if (pendingRequest?.toId === targetPeerId) {
+                    cancelConnectionRequest(targetPeerId, result.requestKey);
+                    setPendingRequest(null);
+                    addToast('Request timed out', 'warning');
+                }
+            }, 30000);
+        } else {
+            addToast('Failed to send request', 'error');
+        }
+    }, [peerId, pendingRequest, connect, addToast]);
+
+    const handleAcceptRequest = useCallback(async () => {
+        if (!incomingRequest || !peerId) return;
+
+        await respondToConnectionRequest(peerId, incomingRequest.key, true);
+        addToast('Connection accepted - waiting for peer to connect...', 'success');
+        // Don't call connect() here - the SENDER will initiate the connection
+        // after receiving the "accepted" response via listenForRequestResponse
+        setIncomingRequest(null);
+    }, [incomingRequest, peerId, addToast]);
+
+    const handleDeclineRequest = useCallback(async () => {
+        if (!incomingRequest || !peerId) return;
+
+        await respondToConnectionRequest(peerId, incomingRequest.key, false);
+        addToast('Request declined', 'info');
+        setIncomingRequest(null);
+    }, [incomingRequest, peerId, addToast]);
+
+    // Subscribe to incoming connection requests
+    useEffect(() => {
+        if (mode === 'anonymous' && peerId && !showPrivateChat) {
+            const unsubscribe = subscribeToConnectionRequests(peerId, (request) => {
+                setIncomingRequest(request);
+            });
+            return unsubscribe;
+        }
+    }, [mode, peerId, showPrivateChat]);
 
     // Connection status change notifications (with debounce for mobile)
     const disconnectTimeoutRef = useRef(null)
@@ -258,7 +335,7 @@ function App() {
             <ToastContainer toasts={toasts} removeToast={removeToast} />
 
             {/* Main Content Area */}
-            <main className="flex-1 w-full max-w-5xl mx-auto px-6 sm:px-8 md:px-12 py-4 sm:py-6 flex flex-col justify-center relative overflow-hidden">
+            <main className="flex-1 w-full max-w-5xl mx-auto px-6 sm:px-8 md:px-12 flex flex-col justify-center relative overflow-hidden">
 
                 {/* Subtle vertical divider for large screens */}
                 <div className="hidden lg:block absolute left-12 top-0 bottom-0 w-[1px] bg-white/5 pointer-events-none" />
@@ -314,9 +391,13 @@ function App() {
                                     onlineUsers={onlineUsers}
                                     messages={globalMessages}
                                     onSendGlobalMessage={handleSendGlobalMessage}
-                                    onConnect={(id) => connect(id)}
+                                    onRequestConnect={handleRequestConnect}
                                     onCancel={handleReset}
                                     showToast={addToast}
+                                    incomingRequest={incomingRequest}
+                                    onAcceptRequest={handleAcceptRequest}
+                                    onDeclineRequest={handleDeclineRequest}
+                                    pendingRequest={pendingRequest}
                                 />
                             )
                         )}
